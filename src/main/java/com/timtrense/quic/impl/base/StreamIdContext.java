@@ -1,8 +1,9 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.StreamId;
-
 import java.util.List;
+
+import com.timtrense.quic.EndpointRole;
+import com.timtrense.quic.StreamId;
 
 /**
  * The context within which {@link StreamId StreamIds} are generated and used.
@@ -16,7 +17,7 @@ public interface StreamIdContext {
      * @return whether this context belongs to the servers side, thus creating only {@link StreamId StreamIds}
      * which are server-initiated
      */
-    boolean isServerSide();
+    EndpointRole getRole();
 
     /**
      * creates a new {@link StreamId} that is not yet used. By specification this gives strictly monotonic

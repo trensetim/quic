@@ -23,7 +23,6 @@ public interface StreamId {
         return getValue().longValue();
     }
 
-
     /**
      * unmasks the streams id from the least 2 significant bits which indicate initiator and uni/bi-directionality.
      *

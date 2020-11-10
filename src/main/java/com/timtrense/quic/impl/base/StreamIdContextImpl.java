@@ -1,18 +1,19 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.StreamId;
-import com.timtrense.quic.VariableLengthInteger;
-import lombok.Data;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import lombok.Data;
+
+import com.timtrense.quic.EndpointRole;
+import com.timtrense.quic.StreamId;
+import com.timtrense.quic.VariableLengthInteger;
 
 @Data
 public class StreamIdContextImpl implements StreamIdContext {
 
-    private final boolean serverSide;
+    private final EndpointRole role;
     private long nextCountingValue = 0L;
     private List<StreamId> knownStreamIds = new LinkedList<>();
 
@@ -22,7 +23,7 @@ public class StreamIdContextImpl implements StreamIdContext {
         StreamId created = new StreamIdImpl(
                 new VariableLengthInteger(
                         ( value << 2 )
-                                | ( serverSide ? StreamId.MASK_INITIATOR : 0 )
+                                | ( role == EndpointRole.SERVER ? StreamId.MASK_INITIATOR : 0 )
                                 | ( forUnidirectional ? StreamId.MASK_DIRECTIONALITY : 0 )
                 )
         );
@@ -37,7 +38,7 @@ public class StreamIdContextImpl implements StreamIdContext {
         }
 
         StreamId testId = new StreamIdImpl( new VariableLengthInteger( streamIdValue ) );
-        if ( testId.isServerInitiated() == serverSide ) {
+        if ( testId.isServerInitiated() == ( role == EndpointRole.SERVER ) ) {
             // remotely created ids must indicate the inverted value for server initiated
             return null;
         }

@@ -4,13 +4,16 @@ import com.timtrense.quic.impl.base.StreamIdContext;
 import com.timtrense.quic.impl.base.StreamIdContextImpl;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static com.timtrense.quic.EndpointRole.CLIENT;
+import static com.timtrense.quic.EndpointRole.SERVER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class StreamIdContextTest {
 
     @Test
     public void createNewId_requested3UnidirectionalIds_returns3ConsecutiveUnidirectionalIds() {
-        StreamIdContext context = new StreamIdContextImpl( true );
+        StreamIdContext context = new StreamIdContextImpl( SERVER );
         StreamId uni1 = context.createNewUnidirectionalId();
         StreamId uni2 = context.createNewUnidirectionalId();
         StreamId uni3 = context.createNewUnidirectionalId();
@@ -21,7 +24,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_requested3IdsFromServerSide_returns3ServerInitiatedIds() {
-        StreamIdContext context = new StreamIdContextImpl( true );
+        StreamIdContext context = new StreamIdContextImpl( SERVER );
         StreamId uni1 = context.createNewUnidirectionalId();
         StreamId uni2 = context.createNewUnidirectionalId();
         StreamId uni3 = context.createNewUnidirectionalId();
@@ -32,7 +35,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_requested3IdsFromClientSide_returns3ClientInitiatedIds() {
-        StreamIdContext context = new StreamIdContextImpl( false );
+        StreamIdContext context = new StreamIdContextImpl( CLIENT );
         StreamId uni1 = context.createNewUnidirectionalId();
         StreamId uni2 = context.createNewUnidirectionalId();
         StreamId uni3 = context.createNewUnidirectionalId();
@@ -43,7 +46,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_requestedEach3IdsFromEachDirectionType_returnsCorrectDirectionTypes() {
-        StreamIdContext context = new StreamIdContextImpl( false );
+        StreamIdContext context = new StreamIdContextImpl( CLIENT );
         StreamId uni1 = context.createNewUnidirectionalId();
         StreamId uni2 = context.createNewUnidirectionalId();
         StreamId uni3 = context.createNewUnidirectionalId();
@@ -61,7 +64,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_requestedEach3IdsFromAlternatingDirectionType_returnsCorrectDirectionTypes() {
-        StreamIdContext context = new StreamIdContextImpl( false );
+        StreamIdContext context = new StreamIdContextImpl( CLIENT );
         StreamId uni1 = context.createNewUnidirectionalId();
         StreamId bi1 = context.createNewBidirectionalId();
         StreamId uni2 = context.createNewUnidirectionalId();
@@ -78,7 +81,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_notifiedAboutNewUniServerId_returnsThisVeryId() {
-        StreamIdContext context = new StreamIdContextImpl( false );
+        StreamIdContext context = new StreamIdContextImpl( CLIENT );
 
         // notify about 0b001000 with uni-mask and server-mask
         StreamId id = context.notifyAboutNewId( 0b001011 );
@@ -90,7 +93,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_requestedIdAfterNotificationOnNewUnidirectional_returnsUnusedUnidirectional() {
-        StreamIdContext context = new StreamIdContextImpl( false );
+        StreamIdContext context = new StreamIdContextImpl( CLIENT );
 
         // notify about 0b001000 with uni-mask and server-mask
         StreamId notifiedId = context.notifyAboutNewId( 0b001011 );
@@ -101,7 +104,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_requestedIdAfter2NotificationOnNewUnidirectional_returnsUnusedUnidirectional() {
-        StreamIdContext context = new StreamIdContextImpl( false );
+        StreamIdContext context = new StreamIdContextImpl( CLIENT );
 
         // notify about 0b001000 with uni-mask and server-mask
         StreamId notifiedId = context.notifyAboutNewId( 0b001011 );
@@ -113,7 +116,7 @@ public class StreamIdContextTest {
 
     @Test
     public void createNewId_notificationOnId_createsIdsInBetween() {
-        StreamIdContext context = new StreamIdContextImpl( false );
+        StreamIdContext context = new StreamIdContextImpl( CLIENT );
 
         // notify about 0b001000 with uni-mask and server-mask
         StreamId notifiedId = context.notifyAboutNewId( 0b001011 );
