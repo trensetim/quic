@@ -1,9 +1,9 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.CreditBasedFlowControl;
-import com.timtrense.quic.FlowControl;
-import com.timtrense.quic.VariableLengthInteger;
 import lombok.Data;
+
+import com.timtrense.quic.CreditBasedFlowControl;
+import com.timtrense.quic.VariableLengthInteger;
 
 @Data
 public class FlowControlImpl implements CreditBasedFlowControl {

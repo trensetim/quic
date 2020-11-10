@@ -1,12 +1,13 @@
 package com.timtrense.quic.impl.packets;
 
-import com.timtrense.quic.*;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
 import java.util.LinkedList;
 import java.util.List;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+import com.timtrense.quic.ConnectionId;
+import com.timtrense.quic.ProtocolVersion;
+import com.timtrense.quic.VersionNegotiationPacket;
 
 /**
  * A Version Negotiation packet is inherently not version-specific.

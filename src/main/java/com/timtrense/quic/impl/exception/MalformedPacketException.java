@@ -1,10 +1,10 @@
 package com.timtrense.quic.impl.exception;
 
-import com.timtrense.quic.impl.ReceivedDatagram;
+import java.nio.ByteBuffer;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.nio.ByteBuffer;
+import com.timtrense.quic.impl.ReceivedDatagram;
 
 /**
  * The datagrams content is no valid QUIC datagram payload

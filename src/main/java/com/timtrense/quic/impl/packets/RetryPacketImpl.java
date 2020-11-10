@@ -1,12 +1,11 @@
 package com.timtrense.quic.impl.packets;
 
-import com.timtrense.quic.*;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.timtrense.quic.ConnectionId;
+import com.timtrense.quic.LongHeaderPacket;
+import com.timtrense.quic.ProtocolVersion;
 
 /**
  * A Retry packet uses a long packet header with a type value of 0x3.

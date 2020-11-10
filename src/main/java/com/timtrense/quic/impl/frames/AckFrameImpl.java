@@ -1,16 +1,16 @@
 package com.timtrense.quic.impl.frames;
 
+import java.util.LinkedList;
+import java.util.List;
+import lombok.Data;
+import lombok.NonNull;
+
 import com.timtrense.quic.AckRange;
 import com.timtrense.quic.EcnCount;
 import com.timtrense.quic.Frame;
 import com.timtrense.quic.FrameGeneralType;
 import com.timtrense.quic.FrameType;
 import com.timtrense.quic.VariableLengthInteger;
-import lombok.Data;
-import lombok.NonNull;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * acknowledgement frame.
@@ -124,7 +124,6 @@ public class AckFrameImpl implements Frame {
     public boolean isEcnBitSet() {
         return ( type.getLongValue() & 0x01 ) == 0x01;
     }
-
 
     @Override
     public boolean isValid() {

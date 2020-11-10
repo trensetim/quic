@@ -1,11 +1,12 @@
 package com.timtrense.quic.impl.frames;
 
+import lombok.Data;
+import lombok.NonNull;
+
 import com.timtrense.quic.Frame;
 import com.timtrense.quic.FrameGeneralType;
 import com.timtrense.quic.FrameType;
 import com.timtrense.quic.VariableLengthInteger;
-import lombok.Data;
-import lombok.NonNull;
 
 /**
  * max streams frame.

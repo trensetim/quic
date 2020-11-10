@@ -1,11 +1,11 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.ConnectionId;
-import com.timtrense.quic.VariableLengthInteger;
+import java.util.Arrays;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.Arrays;
+import com.timtrense.quic.ConnectionId;
+import com.timtrense.quic.VariableLengthInteger;
 
 @Data
 public class ConnectionIdImpl implements ConnectionId {

@@ -1,9 +1,9 @@
 package com.timtrense.quic.impl.base;
 
+import java.util.Collection;
+
 import com.timtrense.quic.TransportParameter;
 import com.timtrense.quic.TransportParameterType;
-
-import java.util.Collection;
 
 /**
  * defines the complete transport configuration consisting of all applied parameters or their respective defaults

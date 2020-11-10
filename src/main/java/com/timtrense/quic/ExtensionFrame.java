@@ -1,7 +1,5 @@
 package com.timtrense.quic;
 
-import com.timtrense.quic.Frame;
-
 /**
  * All QUIC extensions that provide frames MUST let them implement this interface
  *

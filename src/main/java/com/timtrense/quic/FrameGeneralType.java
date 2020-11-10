@@ -1,8 +1,5 @@
 package com.timtrense.quic;
 
-import com.timtrense.quic.impl.frames.AckFrameImpl;
-import com.timtrense.quic.impl.frames.PaddingFrameImpl;
-
 /**
  * general fully distinct types of frames
  *

@@ -1,8 +1,9 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.PacketNumber;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import com.timtrense.quic.PacketNumber;
 
 @Data
 @AllArgsConstructor

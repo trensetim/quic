@@ -1,15 +1,15 @@
 package com.timtrense.quic;
 
-import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-
 import java.lang.constant.Constable;
 import java.lang.constant.ConstantDesc;
 import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.util.Optional;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+
+import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 
 /**
  * QUIC packets and frames commonly use a variable-length encoding for
@@ -218,7 +218,6 @@ public class VariableLengthInteger extends Number
     public VariableLengthInteger decrement() {
         return new VariableLengthInteger( value - 1 );
     }
-
 
     /**
      * does not touch this value

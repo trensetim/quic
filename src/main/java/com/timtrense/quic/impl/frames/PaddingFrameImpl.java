@@ -1,8 +1,9 @@
 package com.timtrense.quic.impl.frames;
 
+import lombok.Data;
+
 import com.timtrense.quic.Frame;
 import com.timtrense.quic.FrameType;
-import lombok.Data;
 
 /**
  * padding frame.

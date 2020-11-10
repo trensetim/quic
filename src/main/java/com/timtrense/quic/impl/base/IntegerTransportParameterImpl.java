@@ -1,9 +1,10 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.TransportParameter;
-import com.timtrense.quic.TransportParameterType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import com.timtrense.quic.TransportParameter;
+import com.timtrense.quic.TransportParameterType;
 
 /**
  * Transport parameters which have integer values are encoded using {@link VariableLengthIntegerEncoder}

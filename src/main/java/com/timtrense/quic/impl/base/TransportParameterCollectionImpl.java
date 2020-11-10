@@ -1,11 +1,11 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.TransportParameter;
-import com.timtrense.quic.TransportParameterType;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.timtrense.quic.TransportParameter;
+import com.timtrense.quic.TransportParameterType;
 
 public class TransportParameterCollectionImpl implements TransportParameterCollection {
 

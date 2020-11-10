@@ -1,12 +1,15 @@
 package com.timtrense.quic.impl.packets;
 
-import com.timtrense.quic.*;
+import java.util.LinkedList;
+import java.util.List;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.timtrense.quic.ConnectionId;
+import com.timtrense.quic.Frame;
+import com.timtrense.quic.PacketNumber;
+import com.timtrense.quic.ShortHeaderPacket;
 
 /**
  * For all details on this class, see {@link ShortHeaderPacket}

@@ -11,8 +11,8 @@ public abstract class PacketNumberEncoder {
     /**
      * decodes a serialized packet number
      *
-     * @param truncatedPacketNumber the serialized packet number
-     * @param largestPacketNumber the largest packet number received so far
+     * @param truncatedPacketNumber            the serialized packet number
+     * @param largestPacketNumber              the largest packet number received so far
      * @param bitLengthOfTruncatedPacketNumber the number of bits that were used to binary-encode that packet number
      * @return the decoded packet number
      */
