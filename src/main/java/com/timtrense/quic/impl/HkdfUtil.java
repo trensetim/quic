@@ -1,6 +1,7 @@
 package com.timtrense.quic.impl;
 
 import at.favre.lib.crypto.HKDF;
+import com.timtrense.quic.ConnectionId;
 import lombok.NonNull;
 
 import java.nio.ByteBuffer;
@@ -114,10 +115,23 @@ public class HkdfUtil {
             @NonNull byte[] label,
             byte[] context,
             int length) {
+        byte[] tlsLabel = tlsCreateLabel(label, context, length);
+        return hkdf.expand(secret, tlsLabel, length);
+    }
+
+    /**
+     * creates the label for use with the HKDF-Expand-Label function
+     * (which is implemented in {@link #tlsExpandLabel(HKDF, byte[], byte[], byte[], int)})
+     *
+     * @param label   the actual label to expand (mostly an {@link StandardCharsets#US_ASCII}-encoded text)
+     * @param context the context label to expand (mostly an {@link StandardCharsets#US_ASCII}-encoded text)
+     * @param length  the length that will be requested from the HKDF-Expand-Label function
+     * @return the label to expand a secret with (actually the HKDF-Expand-parameter "info")
+     */
+    public static byte[] tlsCreateLabel(@NonNull byte[] label, byte[] context, int length) {
         if (context == null) {
             context = new byte[]{};
         }
-
         //  "Its encoding will include a two-byte
         //   actual length field prepended to the vector"
         // Quote from TLS-1.3-Spec https://www.rfc-editor.org/rfc/rfc8446.html#section-3.4
@@ -133,6 +147,68 @@ public class HkdfUtil {
         clientLabel.put(label);
         clientLabel.put((byte) (context.length));
         clientLabel.put(context);
-        return hkdf.expand(secret, clientLabel.array(), length);
+        return clientLabel.array();
     }
+
+    // <editor-fold desc="Expand Label Functions">
+
+    /**
+     * Creates the label for the HKDF-Expand-Label function from
+     * the connection id combined with {@link #LABEL_CLIENT_IN}
+     *
+     * @param connectionId the connection id to expand
+     * @return the expanded label
+     */
+    public static byte[] expandClientInLabel(@NonNull ConnectionId connectionId) {
+        return tlsCreateLabel(LABEL_CLIENT_IN, null, (256 / 8) /*sha 256 byte length*/);
+    }
+
+    /**
+     * Creates the label for the HKDF-Expand-Label function from
+     * the connection id combined with {@link #LABEL_SERVER_IN}
+     *
+     * @param connectionId the connection id to expand
+     * @return the expanded label
+     */
+    public static byte[] expandServerInLabel(@NonNull ConnectionId connectionId) {
+        return tlsCreateLabel(LABEL_SERVER_IN, null, (256 / 8) /*sha 256 byte length*/);
+    }
+
+    /**
+     * Creates the label for the HKDF-Expand-Label function from
+     * the connection id combined with {@link #LABEL_QUIC_KEY}
+     *
+     * @param connectionId the connection id to expand
+     * @return the expanded label
+     */
+    public static byte[] expandQuicKeyLabel(@NonNull ConnectionId connectionId) {
+        // see https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5.8 for reason for length
+        return tlsCreateLabel(LABEL_QUIC_KEY, null, (128 / 8));
+    }
+
+    /**
+     * Creates the label for the HKDF-Expand-Label function from
+     * the connection id combined with {@link #LABEL_QUIC_IV}
+     *
+     * @param connectionId the connection id to expand
+     * @return the expanded label
+     */
+    public static byte[] expandQuicIvLabel(@NonNull ConnectionId connectionId) {
+        // see https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5.8 for reason for length
+        return tlsCreateLabel(LABEL_QUIC_IV, null, (96 / 8));
+    }
+
+    /**
+     * Creates the label for the HKDF-Expand-Label function from
+     * the connection id combined with {@link #LABEL_QUIC_HP}
+     *
+     * @param connectionId the connection id to expand
+     * @return the expanded label
+     */
+    public static byte[] expandQuicHpLabel(@NonNull ConnectionId connectionId) {
+        // quic header protection is always 16 bytes
+        return tlsCreateLabel(LABEL_QUIC_HP, null, 16);
+    }
+
+    // </editor-fold>
 }
