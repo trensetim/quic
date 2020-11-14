@@ -33,6 +33,9 @@ public enum ProtocolVersion {
     IETF_DRAFT_27(0xff00001b),
     IETF_DRAFT_28(0xff00001c),
     IETF_DRAFT_29(0xff00001d),
+    IETF_DRAFT_30(0xff00001e),
+    IETF_DRAFT_31(0xff00001f),
+    IETF_DRAFT_32(0xff000020),
 
     /**
      * <quote>
