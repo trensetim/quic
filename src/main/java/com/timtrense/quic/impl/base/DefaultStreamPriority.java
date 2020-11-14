@@ -1,14 +1,10 @@
 package com.timtrense.quic.impl.base;
 
-import java.lang.constant.ConstantDesc;
-import java.lang.invoke.MethodHandles;
-import java.util.Optional;
+import com.timtrense.quic.StreamPriority;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
-import com.timtrense.quic.StreamPriority;
 
 /**
  * The default implementation of {@link com.timtrense.quic.StreamPriority}
@@ -34,15 +30,5 @@ public class DefaultStreamPriority implements StreamPriority {
         else {
             return 0;
         }
-    }
-
-    @Override
-    public Optional<? extends ConstantDesc> describeConstable() {
-        return Optional.of( this );
-    }
-
-    @Override
-    public Object resolveConstantDesc( MethodHandles.Lookup lookup ) {
-        return this;
     }
 }

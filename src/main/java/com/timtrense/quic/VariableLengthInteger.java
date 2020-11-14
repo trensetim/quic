@@ -1,15 +1,11 @@
 package com.timtrense.quic;
 
-import java.lang.constant.Constable;
-import java.lang.constant.ConstantDesc;
-import java.lang.invoke.MethodHandles;
-import java.nio.ByteBuffer;
-import java.util.Optional;
+import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
+import java.nio.ByteBuffer;
 
 /**
  * QUIC packets and frames commonly use a variable-length encoding for
@@ -56,7 +52,7 @@ import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 @EqualsAndHashCode( callSuper = false, of = "value" )
 @Data
 public class VariableLengthInteger extends Number
-        implements Comparable<VariableLengthInteger>, Constable, ConstantDesc {
+        implements Comparable<VariableLengthInteger> {
 
     public static VariableLengthInteger ZERO = new VariableLengthInteger( 0L );
     public static VariableLengthInteger MIN_VALUE = ZERO;
@@ -132,23 +128,6 @@ public class VariableLengthInteger extends Number
         return Long.compare( this.value, o.value );
     }
 
-    @Override
-    public Optional<? extends ConstantDesc> describeConstable() {
-        /*
-         * @see Long#describeConstable()
-         */
-        return Optional.of( this );
-    }
-
-    @Override
-    public Object resolveConstantDesc( MethodHandles.Lookup lookup )
-    //        throws ReflectiveOperationException
-    {
-        /*
-         * @see Long#resolveConstantDesc(MethodHandles.Lookup)
-         */
-        return this;
-    }
 
     /**
      * decodes a value from the given source. leaves the given source as was before invocation if decoding is not
