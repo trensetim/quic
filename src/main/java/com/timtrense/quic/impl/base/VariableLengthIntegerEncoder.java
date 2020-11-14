@@ -100,7 +100,7 @@ public class VariableLengthIntegerEncoder {
 
         int lengthType = ( firstLengthByte & 0xc0 ) >> 6;
         if ( lengthType == 0 ) {
-            return firstLengthByte & 0b00111111L;
+            return buffer.get() & 0b00111111L;
         }
         else if ( lengthType == 1 && remaining > 1 ) {
             return buffer.getShort() & 0x3fffL;
