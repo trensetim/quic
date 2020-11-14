@@ -1,6 +1,7 @@
 package com.timtrense.quic.impl.exception;
 
 import java.nio.ByteBuffer;
+
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -9,7 +10,7 @@ import com.timtrense.quic.impl.ReceivedDatagram;
 /**
  * At least one packet of the datagrams content could not be parsed,
  * because the required decryption material was missing.
- *
+ * <p>
  * Could happen when, due to packet reordering, the first short header packet arrives before handshake is finished.
  * https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5.7
  * "Due to reordering and loss, protected packets might be received by an
@@ -20,7 +21,7 @@ import com.timtrense.quic.impl.ReceivedDatagram;
 public class OutOfOrderProtectedPacketException extends QuicParsingException {
 
     @Getter
-    private final @NonNull ReceivedDatagram datagram;
+    private final ReceivedDatagram datagram;
     @Getter
     private final @NonNull ByteBuffer payload;
     /**
@@ -30,7 +31,7 @@ public class OutOfOrderProtectedPacketException extends QuicParsingException {
     private final int packetIndex;
 
     public OutOfOrderProtectedPacketException(
-            @NonNull ReceivedDatagram datagram,
+            ReceivedDatagram datagram,
             @NonNull ByteBuffer payload,
             int packetIndex
     ) {
@@ -42,7 +43,7 @@ public class OutOfOrderProtectedPacketException extends QuicParsingException {
 
     public OutOfOrderProtectedPacketException(
             String message,
-            @NonNull ReceivedDatagram datagram,
+            ReceivedDatagram datagram,
             @NonNull ByteBuffer payload,
             int packetIndex
     ) {

@@ -1,6 +1,7 @@
 package com.timtrense.quic.impl.exception;
 
 import java.nio.ByteBuffer;
+
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -14,7 +15,7 @@ import com.timtrense.quic.impl.ReceivedDatagram;
 public class MalformedPacketException extends QuicParsingException {
 
     @Getter
-    private final @NonNull ReceivedDatagram datagram;
+    private final ReceivedDatagram datagram;
     @Getter
     private final @NonNull ByteBuffer payload;
     /**
@@ -24,7 +25,7 @@ public class MalformedPacketException extends QuicParsingException {
     private final int packetIndex;
 
     public MalformedPacketException(
-            @NonNull ReceivedDatagram datagram,
+            ReceivedDatagram datagram,
             @NonNull ByteBuffer payload,
             int packetIndex
     ) {
@@ -36,7 +37,7 @@ public class MalformedPacketException extends QuicParsingException {
 
     public MalformedPacketException(
             String message,
-            @NonNull ReceivedDatagram datagram,
+            ReceivedDatagram datagram,
             @NonNull ByteBuffer payload,
             int packetIndex
     ) {
