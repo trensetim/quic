@@ -18,4 +18,7 @@ This project is open source and freely available even for commercial use and in 
 ## Acknowledgements
 Huge thanks to ptrd/kwik for doing the heavy lifting on most parts of implementing the QUIC protocol. 
 I decided to do my own implementation of QUIC because i felt too much of a pain of trying to understand kwiks source code and doubting that that code base can be long-term maintained.
-And huge thanks to https://github.com/quicwg for making that promising protocol in the first place
+The implementation uses [HKDF by Patrick Favre-Bulle](https://github.com/patrickfav/hkdf Github/patrickfav/hdkf)
+ because it is nicely split into extract and expand which is necessary for how the TLS-implementation works.
+ 
+And huge thanks to https://github.com/quicwg for making that promising protocol in the first place.
