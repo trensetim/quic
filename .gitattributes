@@ -1,0 +1,10 @@
+*.java          text diff=java
+*.gradle        text diff=java
+*.gradle.kts    text diff=java
+*.bat           text diff=batch
+*.md            text diff=markdown
+*.properties    text
+
+*.class         binary
+*.jar           binary
+*.jks           binary
