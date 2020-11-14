@@ -55,6 +55,7 @@ public class VariableLengthInteger extends Number
         implements Comparable<VariableLengthInteger> {
 
     public static VariableLengthInteger ZERO = new VariableLengthInteger( 0L );
+    public static VariableLengthInteger ONE = new VariableLengthInteger( 1L );
     public static VariableLengthInteger MIN_VALUE = ZERO;
     public static VariableLengthInteger MAX_VALUE = new VariableLengthInteger( 4611686018427387903L );
     public static VariableLengthInteger MAX_VALUE_1BYTE = new VariableLengthInteger( 63L );
