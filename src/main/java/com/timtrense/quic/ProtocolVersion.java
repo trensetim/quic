@@ -12,6 +12,28 @@ public enum ProtocolVersion {
 
     RESERVED_FOR_VERSION_NEGOTIATION( 0x00000000 ),
 
+    GOOGLE_QUIC_44(0x51303434),
+    GOOGLE_QUIC_45(0x51303435),
+    IETF_DRAFT_11(0xff00000b),
+    IETF_DRAFT_12(0xff00000c),
+    IETF_DRAFT_13(0xff00000d),
+    IETF_DRAFT_14(0xff00000e),
+    IETF_DRAFT_15(0xff00000f),
+    IETF_DRAFT_16(0xff000010),
+    IETF_DRAFT_17(0xff000011),
+    IETF_DRAFT_18(0xff000012),
+    IETF_DRAFT_19(0xff000013),
+    IETF_DRAFT_20(0xff000014),
+    IETF_DRAFT_21(0xff000015),
+    IETF_DRAFT_22(0xff000016),
+    IETF_DRAFT_23(0xff000017),
+    IETF_DRAFT_24(0xff000018),
+    IETF_DRAFT_25(0xff000019),
+    IETF_DRAFT_26(0xff00001a),
+    IETF_DRAFT_27(0xff00001b),
+    IETF_DRAFT_28(0xff00001c),
+    IETF_DRAFT_29(0xff00001d),
+
     /**
      * <quote>
      * uses TLS as a cryptographic handshake protocol
@@ -55,12 +77,6 @@ public enum ProtocolVersion {
      */
     public static boolean isValid( int protocolVersionValue ) {
         if ( protocolVersionValue == RESERVED_FOR_VERSION_NEGOTIATION.value ) {
-            return false;
-        }
-
-        // DRAFT QUOTE: Version numbers used to identify IETF drafts are created by adding
-        //   the draft number to 0xff000000
-        if ( ( protocolVersionValue & 0xff000000 ) == 0xff000000 ) {
             return false;
         }
 
