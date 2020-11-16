@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 public enum ProtocolVersion {
 
-    RESERVED_FOR_VERSION_NEGOTIATION( 0x00000000 ),
+    RESERVED_FOR_VERSION_NEGOTIATION(0x00000000),
 
     GOOGLE_QUIC_44(0x51303434),
     GOOGLE_QUIC_45(0x51303435),
@@ -48,7 +48,7 @@ public enum ProtocolVersion {
      * published as an RFC.
      * </quote>
      */
-    ONE( 0x00000001 )
+    ONE(0x00000001)
 
     // more may be added in the future
 
@@ -57,17 +57,27 @@ public enum ProtocolVersion {
     @Getter
     private final int value;
 
-    ProtocolVersion( int value ) {
+    ProtocolVersion(int value) {
         this.value = value;
     }
 
-    public static ProtocolVersion findByValue( int value ) {
-        for ( ProtocolVersion f : values() ) {
-            if ( f.value == value ) {
+    public static ProtocolVersion findByValue(int value) {
+        for (ProtocolVersion f : values()) {
+            if (f.value == value) {
                 return f;
             }
         }
         return null;
+    }
+
+    /**
+     * DRAFT QUOTE: Version numbers used to identify IETF drafts are created by adding
+     * the draft number to 0xff000000
+     *
+     * @return true if this version is a draft version from the IETF
+     */
+    public boolean isIetfDraft() {
+        return (value & 0xff000000) == 0xff000000;
     }
 
     /**
@@ -78,13 +88,13 @@ public enum ProtocolVersion {
      * @return true if that is a {@link ProtocolVersion} that may be used by endpoints
      * with this protocol to communicate
      */
-    public static boolean isValid( int protocolVersionValue ) {
-        if ( protocolVersionValue == RESERVED_FOR_VERSION_NEGOTIATION.value ) {
+    public static boolean isValid(int protocolVersionValue) {
+        if (protocolVersionValue == RESERVED_FOR_VERSION_NEGOTIATION.value) {
             return false;
         }
 
         // DRAFT QUOTE: Versions that follow the pattern 0x?a?a?a?a are reserved for use in
         //   forcing version negotiation to be exercised
-        return ( protocolVersionValue & 0x0a0a0a0a ) != 0x0a0a0a0a;
+        return (protocolVersionValue & 0x0a0a0a0a) != 0x0a0a0a0a;
     }
 }
