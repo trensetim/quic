@@ -81,6 +81,19 @@ public enum ProtocolVersion {
     }
 
     /**
+     * DRAFT QUOTE: Version numbers used to identify IETF drafts are created by adding
+     * the draft number to 0xff000000
+     *
+     * @return the draft version from the protocol version or -1 if this is no ietf draft version
+     */
+    public int getIetfDraftVersion() {
+        if (!isIetfDraft()) {
+            return -1;
+        }
+        return (value & 0x00ffffff);
+    }
+
+    /**
      * Checks whether the given serial constant decodes to a valid usable version for endpoints to
      * communicate with one another
      *
