@@ -101,10 +101,10 @@ public class VersionNegotiationPacketImpl implements VersionNegotiationPacket {
     @Override
     public long getPacketLength() {
         // this sum will be precomputed by the compiler
-        long sum = 1 // flags
-                + 4 // version-length
-                + 1 // destination connection id length field
-                + 1 // source connection id length field
+        long sum = 1L // flags
+                + 4L // version-length
+                + 1L // destination connection id length field
+                + 1L // source connection id length field
                 ;
         sum += destinationConnectionIdLength;
         sum += sourceConnectionIdLength;
