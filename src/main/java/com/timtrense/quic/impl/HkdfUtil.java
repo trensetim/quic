@@ -18,6 +18,8 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  */
 public class HkdfUtil {
 
+    private HkdfUtil() {}
+
     /**
      * the charset used by QUIC Spec to encode the HKDF labels
      *
