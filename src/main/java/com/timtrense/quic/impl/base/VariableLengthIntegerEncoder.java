@@ -12,6 +12,8 @@ import java.nio.ByteBuffer;
  */
 public class VariableLengthIntegerEncoder {
 
+    private VariableLengthIntegerEncoder() {}
+
     /**
      * determines the required number of bytes to encode the given value.
      *
