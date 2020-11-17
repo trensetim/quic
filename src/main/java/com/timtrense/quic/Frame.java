@@ -29,5 +29,5 @@ public interface Frame {
      * @return the length of this frame in bytes or -1 if the frame is either invalid or of unknown length
      * @throws NullPointerException if the frame contains required fields with null value
      */
-    long getFrameLength() throws NullPointerException;
+    long getFrameLength();
 }
