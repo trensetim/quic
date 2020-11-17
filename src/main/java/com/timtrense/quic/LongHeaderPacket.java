@@ -44,6 +44,11 @@ package com.timtrense.quic;
 public interface LongHeaderPacket extends Packet {
 
     /**
+     * bitmask to extract the long packet type from the flags
+     */
+    int FLAGS_TYPE_MASK = 0b00110000;
+
+    /**
      * Header Form (1) = 1,
      * Fixed Bit (1) = 1,
      * Long Packet Type (2),

@@ -1,6 +1,7 @@
 package com.timtrense.quic.impl.packets;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import com.timtrense.quic.ConnectionId;
@@ -116,15 +117,10 @@ import com.timtrense.quic.ProtocolVersion;
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-17.2.5">QUIC Spec/Section 17.2.5</a>
  */
 @Data
+@EqualsAndHashCode( callSuper = true )
 @RequiredArgsConstructor
-public class RetryPacketImpl implements LongHeaderPacket {
+public class RetryPacketImpl extends BaseLongHeaderPacket {
 
-    private byte flags;
-    private ProtocolVersion version;
-    private long destinationConnectionIdLength;
-    private ConnectionId destinationConnectionId;
-    private long sourceConnectionIdLength;
-    private ConnectionId sourceConnectionId;
     private byte[] retryToken; // length = (end of datagram - 16 bytes for retryIntegrityTag) - (length of other fields)
     private byte[] retryIntegrityTag; // length 16 bytes
 
@@ -144,16 +140,9 @@ public class RetryPacketImpl implements LongHeaderPacket {
 
     @Override
     public long getPacketLength() {
-        // this sum will be precomputed by the compiler
-        long sum = 1L // flags
-                + 4L // version-length
-                + 1L // destination connection id length field
-                + 1L // source connection id length field
+        return super.getPacketLength()
+                + retryToken.length
                 + 16L // retry integrity tag length
                 ;
-        sum += destinationConnectionIdLength;
-        sum += sourceConnectionIdLength;
-        sum += retryToken.length;
-        return sum;
     }
 }

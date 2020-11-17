@@ -3,6 +3,7 @@ package com.timtrense.quic.impl.packets;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -55,15 +56,10 @@ import com.timtrense.quic.VariableLengthInteger;
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-17.2.3">QUIC Spec/Section 17.2.3</a>
  */
 @Data
+@EqualsAndHashCode( callSuper = true )
 @RequiredArgsConstructor
-public class ZeroRttPacketImpl implements LongHeaderPacket, NumberedPacket, FrameContainingPacket {
+public class ZeroRttPacketImpl extends BaseLongHeaderPacket implements NumberedPacket, FrameContainingPacket {
 
-    private byte flags;
-    private ProtocolVersion version;
-    private long destinationConnectionIdLength;
-    private ConnectionId destinationConnectionId;
-    private long sourceConnectionIdLength;
-    private ConnectionId sourceConnectionId;
     // private VariableLengthInteger length; // that is the #getPayloadLength()
     private PacketNumber packetNumber;
     private final @NonNull List<Frame> payload = new LinkedList<>();
@@ -86,14 +82,7 @@ public class ZeroRttPacketImpl implements LongHeaderPacket, NumberedPacket, Fram
 
     @Override
     public long getPacketLength() {
-        // this sum will be precomputed by the compiler
-        long sum = 1L // flags
-                + 4L // version-length
-                + 1L // destination connection id length field
-                + 1L // source connection id length field
-                ;
-        sum += destinationConnectionIdLength;
-        sum += sourceConnectionIdLength;
+        long sum = super.getPacketLength();
         sum += getPacketNumberLength();
         VariableLengthInteger payloadLength = getPayloadLength();
         sum += payloadLength.getEncodedLengthInBytes();

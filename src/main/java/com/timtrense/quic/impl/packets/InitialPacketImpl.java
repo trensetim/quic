@@ -2,6 +2,7 @@ package com.timtrense.quic.impl.packets;
 
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.Frame;
@@ -76,14 +77,9 @@ import com.timtrense.quic.VariableLengthInteger;
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-17.2.2">QUIC Spec/Section 17.2.2</a>
  */
 @Data
-public class InitialPacketImpl implements LongHeaderPacket, NumberedPacket, FrameContainingPacket {
+@EqualsAndHashCode( callSuper = true )
+public class InitialPacketImpl extends BaseLongHeaderPacket implements NumberedPacket, FrameContainingPacket {
 
-    private byte flags;
-    private ProtocolVersion version;
-    private long destinationConnectionIdLength;
-    private ConnectionId destinationConnectionId;
-    private long sourceConnectionIdLength;
-    private ConnectionId sourceConnectionId;
     private VariableLengthInteger tokenLength;
     private byte[] token;
     // private VariableLengthInteger length; // that is the #getPayloadLength()
@@ -146,14 +142,7 @@ public class InitialPacketImpl implements LongHeaderPacket, NumberedPacket, Fram
 
     @Override
     public long getPacketLength() {
-        // this sum will be precomputed by the compiler
-        long sum = 1L // flags
-                + 4L // version-length
-                + 1L // destination connection id length field
-                + 1L // source connection id length field
-                ;
-        sum += destinationConnectionIdLength;
-        sum += sourceConnectionIdLength;
+        long sum = super.getPacketLength();
         sum += tokenLength.getEncodedLengthInBytes();
         sum += tokenLength.getValue();
         sum += getPacketNumberLength();
