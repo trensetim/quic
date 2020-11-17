@@ -15,7 +15,7 @@ public interface PacketProtection {
      * @param sample the initial keying material, sampled bytes from the ciphertext
      * @param offset offset within the given byte-array to start reading the ikm from
      * @param length length of the ikm
-     * @return the header protection mask
+     * @return the header protection mask or null if it cannot be computed from the current state and sample
      */
     byte[] deriveHeaderProtectionMask( @NonNull byte[] sample, int offset, int length );
 
@@ -23,7 +23,7 @@ public interface PacketProtection {
      * forwards {@link #deriveHeaderProtectionMask(byte[], int, int)} with offset=0 and length=sample.length.
      *
      * @param sample the initial keying material, sampled bytes from the ciphertext
-     * @return the header protection mask
+     * @return the header protection mask or null if it cannot be computed from the current state and sample
      */
     default byte[] deriveHeaderProtectionMask( @NonNull byte[] sample ) {
         return deriveHeaderProtectionMask( sample, 0, sample.length );
