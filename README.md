@@ -2,12 +2,14 @@
 Pure Java implementation of QUIC.
 The primary goal of this project is to eventually evolve to Java's standard implementation of QUIC.
 
+[![Quality Gate Status](https://sonarqube.timtrense.com/api/project_badges/measure?project=com.timtrense.quic&metric=alert_status)](https://sonarqube.timtrense.com/dashboard?id=com.timtrense.quic)
+
 ## Project Structure
 This project combines a clean QUIC interface in com.timtrense.quic as well as a default implementation for it in com.timtrense.quic.impl.base and ~.frames and ~.packets.
 
 ## Project Status
 The implementation of the protocol is still work in progess but aims to completly adhere and implement the IETF specification at https://tools.ietf.org/html/draft-ietf-quic-transport-32 and referenced documents.
-I will set up a CI pipeline and static code analysis pipeline soon as well as a Dockerfile for integration testing at https://quicwg.org/ as soon as this implementation reaches usability.
+I will set up a CI pipeline soon as well as a Dockerfile for integration testing at https://quicwg.org/ as soon as this implementation reaches usability.
 
 ## Contributing
 Contributions welcome. Please feel free to contact me or write a pull request.

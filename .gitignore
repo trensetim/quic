@@ -10,3 +10,4 @@
 /build
 /workspace.xml
 
+/src/test/java/com/timtrense/quic/Adhoc.java
