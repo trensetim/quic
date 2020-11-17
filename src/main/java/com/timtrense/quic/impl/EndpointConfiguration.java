@@ -5,6 +5,7 @@ import java.util.Random;
 import lombok.Data;
 import lombok.NonNull;
 
+import com.timtrense.quic.TransportParameter;
 import com.timtrense.quic.impl.base.TransportParameterCollection;
 import com.timtrense.quic.impl.base.TransportParameterCollectionImpl;
 
@@ -21,7 +22,11 @@ public class EndpointConfiguration {
      */
     private @NonNull Random random = new SecureRandom();
 
+    /**
+     * All {@link TransportParameter transport parameters} in use
+     */
     private @NonNull TransportParameterCollection transportParameters = new TransportParameterCollectionImpl();
+
     /**
      * The maximum amount of bytes a datagram may carry.
      * Default = 1600, because most networks MTU is 1500 + a little buffer
@@ -42,6 +47,7 @@ public class EndpointConfiguration {
      * @see Receiver#getReceiveTargetBlockingTimeout()
      */
     private int receiveTargetBlockingTimeout = 1000;
+
     /**
      * @see DatagramParser#getParsedTargetBlockingTimeout()
      */
