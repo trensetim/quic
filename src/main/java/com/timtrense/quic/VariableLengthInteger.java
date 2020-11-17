@@ -54,18 +54,18 @@ import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 public class VariableLengthInteger extends Number
         implements Comparable<VariableLengthInteger> {
 
-    public static VariableLengthInteger ZERO = new VariableLengthInteger( 0L );
-    public static VariableLengthInteger ONE = new VariableLengthInteger( 1L );
-    public static VariableLengthInteger MIN_VALUE = ZERO;
-    public static VariableLengthInteger MAX_VALUE = new VariableLengthInteger( 4611686018427387903L );
-    public static VariableLengthInteger MAX_VALUE_1BYTE = new VariableLengthInteger( 63L );
-    public static VariableLengthInteger MAX_VALUE_2BYTE = new VariableLengthInteger( 16383L );
-    public static VariableLengthInteger MAX_VALUE_4BYTE = new VariableLengthInteger( 1073741823L );
-    public static VariableLengthInteger MAX_VALUE_8BYTE = MAX_VALUE;
-    public static VariableLengthInteger MIN_VALUE_1BYTE = new VariableLengthInteger( 0L );
-    public static VariableLengthInteger MIN_VALUE_2BYTE = new VariableLengthInteger( 64L );
-    public static VariableLengthInteger MIN_VALUE_4BYTE = new VariableLengthInteger( 16384L );
-    public static VariableLengthInteger MIN_VALUE_8BYTE = new VariableLengthInteger( 1073741824L );
+    public static final VariableLengthInteger ZERO = new VariableLengthInteger( 0L );
+    public static final VariableLengthInteger ONE = new VariableLengthInteger( 1L );
+    public static final VariableLengthInteger MIN_VALUE = ZERO;
+    public static final VariableLengthInteger MAX_VALUE = new VariableLengthInteger( 4611686018427387903L );
+    public static final VariableLengthInteger MAX_VALUE_1BYTE = new VariableLengthInteger( 63L );
+    public static final VariableLengthInteger MAX_VALUE_2BYTE = new VariableLengthInteger( 16383L );
+    public static final VariableLengthInteger MAX_VALUE_4BYTE = new VariableLengthInteger( 1073741823L );
+    public static final VariableLengthInteger MAX_VALUE_8BYTE = MAX_VALUE;
+    public static final VariableLengthInteger MIN_VALUE_1BYTE = new VariableLengthInteger( 0L );
+    public static final VariableLengthInteger MIN_VALUE_2BYTE = new VariableLengthInteger( 64L );
+    public static final VariableLengthInteger MIN_VALUE_4BYTE = new VariableLengthInteger( 16384L );
+    public static final VariableLengthInteger MIN_VALUE_8BYTE = new VariableLengthInteger( 1073741824L );
 
     /**
      * the actual value
