@@ -40,7 +40,8 @@ public class FlowControlImpl implements CreditBasedFlowControl {
             throw new IllegalArgumentException( "Cannot increment the transferred number of bytes count by a negative" +
                     " amount of: " + numberOfBytes );
         }
-        return ( transferred = transferred.increment( numberOfBytes ) ).longValue();
+        transferred = transferred.increment( numberOfBytes );
+        return transferred.longValue();
     }
 
     @Override
@@ -49,6 +50,7 @@ public class FlowControlImpl implements CreditBasedFlowControl {
             throw new IllegalArgumentException( "Cannot increment the limit number of bytes count by a negative " +
                     "amount of: " + numberOfBytes );
         }
-        return ( limit = limit.increment( numberOfBytes ) ).longValue();
+        limit = limit.increment( numberOfBytes );
+        return limit.longValue();
     }
 }
