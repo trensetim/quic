@@ -6,7 +6,12 @@ package com.timtrense.quic.impl.base;
  *
  * @author Tim Trense
  */
-public abstract class PacketNumberEncoder {
+public class PacketNumberEncoder {
+
+    /**
+     * Private constructor enforcing this class to not be instantiable
+     */
+    private PacketNumberEncoder() {}
 
     /**
      * decodes a serialized packet number
