@@ -41,7 +41,7 @@ public interface FrameContainingPacket extends Packet {
      * @return the sum of the lengths of this packets payload in bytes or an invalid number if ANY frame is invalid
      * @throws NullPointerException if any of the packets payload frames contain required fields with null value
      */
-    default long getLongPayloadLength() throws NullPointerException {
+    default long getLongPayloadLength() {
         long sum = 0;
         List<Frame> payload = getPayload();
         if ( payload != null ) {
@@ -60,7 +60,7 @@ public interface FrameContainingPacket extends Packet {
      * @throws NullPointerException     if any of the packets payload frames contain required fields with null value
      * @throws IllegalArgumentException if the computed length cannot be expressed as a {@link VariableLengthInteger}
      */
-    default VariableLengthInteger getPayloadLength() throws NullPointerException, IllegalArgumentException {
+    default VariableLengthInteger getPayloadLength() {
         return new VariableLengthInteger( getLongPayloadLength() );
     }
 
