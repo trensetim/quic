@@ -92,21 +92,27 @@ public class InitialPacketImpl implements LongHeaderPacket, NumberedPacket, Fram
 
     @Override
     public boolean isPacketValid() {
-        if ( !
+        if ( !(
                 ( ( flags & 0b10000000 ) == 0b10000000 )
-                && ( ( flags & 0b01000000 ) == 0b01000000 )
-                && ( ( flags & 0b00110000 ) == 0b00000000 ) // LongHeaderPacketType.INITIAL
-                && ( ( flags & 0b00000011 ) != 0b00000000 )
-                && ( version != null )
-                && ( version != ProtocolVersion.RESERVED_FOR_VERSION_NEGOTIATION )
-                && tokenLength != null
-                &&
-                (
-                        tokenLength.longValue() == 0
-                                ? token == null
-                                : ( token != null && token.length == tokenLength.longValue() )
-                )
-                && packetNumber != null ) {
+                        && ( ( flags & 0b01000000 ) == 0b01000000 )
+                        && ( ( flags & 0b00110000 ) == 0b00000000 ) // LongHeaderPacketType.INITIAL
+                        && ( ( flags & 0b00000011 ) != 0b00000000 )
+                        && ( version != null )
+                        && ( version != ProtocolVersion.RESERVED_FOR_VERSION_NEGOTIATION )
+                        && tokenLength != null
+                        &&
+                        ( // token is not mandatory
+                                tokenLength.longValue() == 0
+                                        ? token == null
+                                        : ( token != null && token.length == tokenLength.longValue() )
+                        )
+                        &&
+                        ( // destination connection id is not mandatory. routing can be done using "zero-length cid"
+                                ( destinationConnectionIdLength == 0 ) == ( destinationConnectionId == null )
+                        )
+                        && sourceConnectionIdLength != 0
+                        && sourceConnectionId != null
+                        && packetNumber != null ) ) {
             return false;
         }
         if ( payload != null ) {

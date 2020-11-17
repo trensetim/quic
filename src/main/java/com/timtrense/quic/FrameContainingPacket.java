@@ -43,8 +43,11 @@ public interface FrameContainingPacket extends Packet {
      */
     default long getLongPayloadLength() throws NullPointerException {
         long sum = 0;
-        for ( Frame frame : getPayload() ) {
-            sum += frame.getFrameLength();
+        List<Frame> payload = getPayload();
+        if ( payload != null ) {
+            for ( Frame frame : payload ) {
+                sum += frame.getFrameLength();
+            }
         }
         return sum;
     }
