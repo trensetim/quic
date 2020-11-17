@@ -147,6 +147,7 @@ public class Receiver extends Thread implements DatagramRecycler {
                     }
                 }
                 catch ( InterruptedIOException | InterruptedException ignored ) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
             }
