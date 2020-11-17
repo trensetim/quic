@@ -32,8 +32,4 @@ jacocoTestReport {
     }
 }
 
-build {
-    finalizedBy test
-}
-
 tasks['sonarqube'].dependsOn test
