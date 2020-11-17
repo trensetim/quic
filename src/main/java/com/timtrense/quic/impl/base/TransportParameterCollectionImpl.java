@@ -1,6 +1,7 @@
 package com.timtrense.quic.impl.base;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public class TransportParameterCollectionImpl implements TransportParameterColle
     public static final Map<TransportParameterType, TransportParameter<?>> PARAMETER_DEFAULT_VALUES;
 
     static {
-        PARAMETER_DEFAULT_VALUES = new HashMap<>();
+        PARAMETER_DEFAULT_VALUES = new EnumMap<>( TransportParameterType.class );
         PARAMETER_DEFAULT_VALUES.put(
                 TransportParameterType.ORIGINAL_DESTINATION_CONNECTION_ID,
                 new IntegerTransportParameterImpl( TransportParameterType.ORIGINAL_DESTINATION_CONNECTION_ID, 0 )
