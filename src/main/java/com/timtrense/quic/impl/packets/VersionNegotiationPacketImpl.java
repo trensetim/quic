@@ -80,7 +80,6 @@ import com.timtrense.quic.VersionNegotiationPacket;
 public class VersionNegotiationPacketImpl implements VersionNegotiationPacket {
 
     private byte flags;
-    private final ProtocolVersion version = ProtocolVersion.RESERVED_FOR_VERSION_NEGOTIATION;
     private long destinationConnectionIdLength;
     private ConnectionId destinationConnectionId;
     private long sourceConnectionIdLength;
