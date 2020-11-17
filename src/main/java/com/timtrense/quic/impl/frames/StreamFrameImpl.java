@@ -153,7 +153,7 @@ public class StreamFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += streamId.getValue().getEncodedLengthInBytes();
         if ( length != null ) {

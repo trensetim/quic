@@ -70,7 +70,7 @@ public class MaxStreamsFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += maximumStreams.getEncodedLengthInBytes();
         return sum;

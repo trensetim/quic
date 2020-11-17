@@ -79,7 +79,7 @@ public class CryptoFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += offset.getEncodedLengthInBytes();
         sum += length.getEncodedLengthInBytes();

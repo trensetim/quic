@@ -42,7 +42,7 @@ public class PaddingFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         // return type.getValue().getEncodedLengthInBytes(); // this will always be 1, because type.getValue() == 0
         return 1;
     }

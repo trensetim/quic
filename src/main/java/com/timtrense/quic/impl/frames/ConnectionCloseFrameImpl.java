@@ -118,7 +118,7 @@ public class ConnectionCloseFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += errorCode.getEncodedLengthInBytes();
         if ( frameType != null ) {

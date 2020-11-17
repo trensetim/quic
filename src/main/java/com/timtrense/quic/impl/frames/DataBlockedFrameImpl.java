@@ -47,7 +47,7 @@ public class DataBlockedFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += maximumData.getEncodedLengthInBytes();
         return sum;

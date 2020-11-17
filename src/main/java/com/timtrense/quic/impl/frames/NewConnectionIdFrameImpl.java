@@ -115,7 +115,7 @@ public class NewConnectionIdFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += sequenceNumber.getEncodedLengthInBytes();
         sum += retirePriorTo.getEncodedLengthInBytes();

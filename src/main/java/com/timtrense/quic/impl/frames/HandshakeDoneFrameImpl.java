@@ -46,7 +46,7 @@ public class HandshakeDoneFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         return type.getValue().getEncodedLengthInBytes();
     }
 }

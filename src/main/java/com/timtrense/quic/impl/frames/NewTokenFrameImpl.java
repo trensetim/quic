@@ -67,7 +67,7 @@ public class NewTokenFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += tokenLength.getEncodedLengthInBytes();
         sum += tokenLength.getValue();

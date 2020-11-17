@@ -52,7 +52,7 @@ public class PathResponseFrameImpl implements Frame {
     }
 
     @Override
-    public long getFrameLength() throws NullPointerException {
+    public long getFrameLength() {
         /*
         long sum = type.getValue().getEncodedLengthInBytes();
         sum += 8; // data.length == 8 by protocol specification
