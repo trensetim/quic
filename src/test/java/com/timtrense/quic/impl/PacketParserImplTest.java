@@ -1,16 +1,24 @@
 package com.timtrense.quic.impl;
 
-import com.timtrense.quic.*;
+import java.nio.ByteBuffer;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.timtrense.quic.ConnectionId;
+import com.timtrense.quic.EndpointRole;
+import com.timtrense.quic.HexByteStringConvertHelper;
+import com.timtrense.quic.Packet;
+import com.timtrense.quic.ProtocolVersion;
+import com.timtrense.quic.VariableLengthInteger;
 import com.timtrense.quic.impl.base.ConnectionIdImpl;
 import com.timtrense.quic.impl.base.PacketNumberImpl;
 import com.timtrense.quic.impl.exception.QuicParsingException;
 import com.timtrense.quic.impl.packets.InitialPacketImpl;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
-import java.nio.ByteBuffer;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @see com.timtrense.quic.impl.PacketParserImpl
@@ -23,10 +31,10 @@ public class PacketParserImplTest {
     @BeforeClass
     public static void setupClientConnectionId() {
         byte[] ccid = new byte[]{
-                (byte) 0x83, (byte) 0x94, (byte) 0xc8, (byte) 0xf0,
-                (byte) 0x3e, (byte) 0x51, (byte) 0x57, (byte) 0x08
+                (byte)0x83, (byte)0x94, (byte)0xc8, (byte)0xf0,
+                (byte)0x3e, (byte)0x51, (byte)0x57, (byte)0x08
         };
-        expectedDestinationConnectionId = new ConnectionIdImpl(ccid, VariableLengthInteger.ZERO);
+        expectedDestinationConnectionId = new ConnectionIdImpl( ccid, VariableLengthInteger.ZERO );
     }
 
     @BeforeClass
@@ -69,38 +77,39 @@ public class PacketParserImplTest {
                 "8c39350effbc2d16ca17be4ce29f02ed 969504dda2a8c6b9ff919e693ee79e09 " +
                 "089316e7d1d89ec099db3b2b268725d8 88536a4b8bf9aee8fb43e82a4d919d48 " +
                 "b5a464ca5b62df3be35ee0d0a2ec68f3";
-        hexdumpFromAppendixA = hexdumpFromAppendixA.replaceAll(" ", "");
-        protectedInitialPacket = HexByteStringConvertHelper.hexStringToByteArray(hexdumpFromAppendixA);
+        hexdumpFromAppendixA = hexdumpFromAppendixA.replaceAll( " ", "" );
+        protectedInitialPacket = HexByteStringConvertHelper.hexStringToByteArray( hexdumpFromAppendixA );
     }
 
     @Test
     public void parsePacket_GivenAppendixAContent_givesInitialPacket() {
-        Endpoint endpoint = new Endpoint(EndpointRole.SERVER);
-        PacketParser packetParser = new PacketParserImpl(endpoint);
-        ByteBuffer packetData = ByteBuffer.wrap(protectedInitialPacket);
+        Endpoint endpoint = new Endpoint( EndpointRole.SERVER );
+        PacketParser packetParser = new PacketParserImpl( endpoint );
+        ByteBuffer packetData = ByteBuffer.wrap( protectedInitialPacket );
 
         Packet packet = null;
         try {
-            packet = packetParser.parsePacket(null, packetData, 0);
-        } catch (QuicParsingException e) {
+            packet = packetParser.parsePacket( null, packetData, 0 );
+        }
+        catch ( QuicParsingException e ) {
             e.printStackTrace();
         }
 
-        assertNotNull(packet);
-        assertEquals(InitialPacketImpl.class, packet.getClass());
-        InitialPacketImpl initialPacket = (InitialPacketImpl) packet;
-        assertEquals((byte)0xc3, initialPacket.getFlags());
-        assertEquals(ProtocolVersion.IETF_DRAFT_32, initialPacket.getVersion());
-        assertEquals(8L, initialPacket.getDestinationConnectionIdLength());
-        assertEquals(0L, initialPacket.getSourceConnectionIdLength());
-        assertArrayEquals(new byte[]{(byte) 0x83, (byte) 0x94, (byte) 0xc8, (byte) 0xf0,
-                (byte) 0x3e, (byte) 0x51, (byte) 0x57, (byte) 0x08}, initialPacket.getDestinationConnectionId().getValue());
-        assertEquals(VariableLengthInteger.ZERO, initialPacket.getDestinationConnectionId().getSequenceNumber());
-        assertArrayEquals(new byte[]{}, initialPacket.getSourceConnectionId().getValue());
-        assertEquals(VariableLengthInteger.ZERO, initialPacket.getSourceConnectionId().getSequenceNumber());
-        assertEquals(VariableLengthInteger.ZERO, initialPacket.getTokenLength());
-        assertArrayEquals(null, initialPacket.getToken());
-        assertEquals(new PacketNumberImpl(2), initialPacket.getPacketNumber());
+        assertNotNull( packet );
+        assertEquals( InitialPacketImpl.class, packet.getClass() );
+        InitialPacketImpl initialPacket = (InitialPacketImpl)packet;
+        assertEquals( (byte)0xc3, initialPacket.getFlags() );
+        assertEquals( ProtocolVersion.IETF_DRAFT_32, initialPacket.getVersion() );
+        assertEquals( 8L, initialPacket.getDestinationConnectionIdLength() );
+        assertEquals( 0L, initialPacket.getSourceConnectionIdLength() );
+        assertArrayEquals( new byte[]{(byte)0x83, (byte)0x94, (byte)0xc8, (byte)0xf0,
+                (byte)0x3e, (byte)0x51, (byte)0x57, (byte)0x08}, initialPacket.getDestinationConnectionId().getValue() );
+        assertEquals( VariableLengthInteger.ZERO, initialPacket.getDestinationConnectionId().getSequenceNumber() );
+        assertArrayEquals( new byte[]{}, initialPacket.getSourceConnectionId().getValue() );
+        assertEquals( VariableLengthInteger.ZERO, initialPacket.getSourceConnectionId().getSequenceNumber() );
+        assertEquals( VariableLengthInteger.ZERO, initialPacket.getTokenLength() );
+        assertArrayEquals( null, initialPacket.getToken() );
+        assertEquals( new PacketNumberImpl( 2 ), initialPacket.getPacketNumber() );
     }
 
 }

@@ -1,9 +1,16 @@
 package com.timtrense.quic.impl.packets;
 
-import com.timtrense.quic.*;
+import java.util.List;
 import lombok.Data;
 
-import java.util.List;
+import com.timtrense.quic.ConnectionId;
+import com.timtrense.quic.Frame;
+import com.timtrense.quic.FrameContainingPacket;
+import com.timtrense.quic.LongHeaderPacket;
+import com.timtrense.quic.NumberedPacket;
+import com.timtrense.quic.PacketNumber;
+import com.timtrense.quic.ProtocolVersion;
+import com.timtrense.quic.VariableLengthInteger;
 
 /**
  * An Initial packet uses long headers with a type value of 0x0.  It

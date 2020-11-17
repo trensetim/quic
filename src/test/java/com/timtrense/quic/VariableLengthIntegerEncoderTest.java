@@ -1,9 +1,10 @@
 package com.timtrense.quic;
 
-import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
+import java.nio.ByteBuffer;
+
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
+import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

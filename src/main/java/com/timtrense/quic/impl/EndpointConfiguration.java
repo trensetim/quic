@@ -1,13 +1,12 @@
 package com.timtrense.quic.impl;
 
+import java.security.SecureRandom;
+import java.util.Random;
 import lombok.Data;
 import lombok.NonNull;
 
 import com.timtrense.quic.impl.base.TransportParameterCollection;
 import com.timtrense.quic.impl.base.TransportParameterCollectionImpl;
-
-import java.security.SecureRandom;
-import java.util.Random;
 
 /**
  * All configuration parameters for an {@link Endpoint}

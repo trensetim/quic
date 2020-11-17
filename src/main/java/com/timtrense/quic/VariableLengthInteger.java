@@ -1,11 +1,11 @@
 package com.timtrense.quic;
 
-import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
+import java.nio.ByteBuffer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-import java.nio.ByteBuffer;
+import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 
 /**
  * QUIC packets and frames commonly use a variable-length encoding for

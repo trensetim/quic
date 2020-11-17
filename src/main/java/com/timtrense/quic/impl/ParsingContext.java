@@ -33,7 +33,7 @@ public interface ParsingContext {
      * @param encryptionLevel the level to retrieve the keys from
      * @return the associated protection
      */
-    PacketProtection getPacketProtection(ConnectionId connectionId, EncryptionLevel encryptionLevel);
+    PacketProtection getPacketProtection( ConnectionId connectionId, EncryptionLevel encryptionLevel );
 
     //TODO: getPeerSecret(byte[] connectionId, EncryptionLevel)
     //TODO: getLocalSecret(byte[] connectionId, EncryptionLevel)

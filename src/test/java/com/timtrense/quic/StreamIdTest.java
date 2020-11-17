@@ -1,9 +1,12 @@
 package com.timtrense.quic;
 
-import com.timtrense.quic.impl.base.StreamIdImpl;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.timtrense.quic.impl.base.StreamIdImpl;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class StreamIdTest {
 

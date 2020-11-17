@@ -1,14 +1,14 @@
 package com.timtrense.quic.impl;
 
-import com.timtrense.quic.ConnectionId;
-import com.timtrense.quic.EncryptionLevel;
-import com.timtrense.quic.EndpointRole;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.timtrense.quic.ConnectionId;
+import com.timtrense.quic.EncryptionLevel;
+import com.timtrense.quic.EndpointRole;
 
 /**
  * An endpoint is the most high level access for an application to use QUIC.
@@ -35,9 +35,9 @@ public class Endpoint implements ParsingContext {
      * @param connectionId a local connection id
      * @return the connection if found
      */
-    Connection findConnectionByLocalId(@NonNull ConnectionId connectionId) {
-        for (Map.Entry<ConnectionId, Connection> entries : connections.entrySet()) {
-            if (entries.getKey().equals(connectionId)) {
+    Connection findConnectionByLocalId( @NonNull ConnectionId connectionId ) {
+        for ( Map.Entry<ConnectionId, Connection> entries : connections.entrySet() ) {
+            if ( entries.getKey().equals( connectionId ) ) {
                 return entries.getValue();
             }
         }
@@ -50,9 +50,9 @@ public class Endpoint implements ParsingContext {
      * @param connectionId the serialized form of a local connection id
      * @return the connection if found
      */
-    Connection findConnectionByLocalId(@NonNull byte[] connectionId) {
-        for (Map.Entry<ConnectionId, Connection> entries : connections.entrySet()) {
-            if (entries.getKey().equalsValue(connectionId)) {
+    Connection findConnectionByLocalId( @NonNull byte[] connectionId ) {
+        for ( Map.Entry<ConnectionId, Connection> entries : connections.entrySet() ) {
+            if ( entries.getKey().equalsValue( connectionId ) ) {
                 return entries.getValue();
             }
         }
@@ -60,12 +60,12 @@ public class Endpoint implements ParsingContext {
     }
 
     @Override
-    public PacketProtection getPacketProtection(ConnectionId connectionId, EncryptionLevel encryptionLevel) {
-        Connection connection = findConnectionByLocalId(connectionId);
-        if (connection == null) {
+    public PacketProtection getPacketProtection( ConnectionId connectionId, EncryptionLevel encryptionLevel ) {
+        Connection connection = findConnectionByLocalId( connectionId );
+        if ( connection == null ) {
             return null;
         }
-        return connection.getPacketProtection(encryptionLevel);
+        return connection.getPacketProtection( encryptionLevel );
     }
 
     /**
@@ -74,10 +74,10 @@ public class Endpoint implements ParsingContext {
     public byte[] createRandomUnusedConnectionId() {
         byte[] cid = new byte[8];
         do {
-            configuration.getRandom().nextBytes(cid);
+            configuration.getRandom().nextBytes( cid );
             // this loop will not repeat in real life, because chances of
             // having a colliding 256-pow-8 random value are near to zero
-        } while (findConnectionByLocalId(cid) != null);
+        } while ( findConnectionByLocalId( cid ) != null );
         return cid;
     }
 }

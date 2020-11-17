@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -21,7 +20,7 @@ import lombok.Setter;
  *
  * @author Tim Trense
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode( callSuper = true )
 public class Receiver extends Thread implements DatagramRecycler {
 
     /**
@@ -75,14 +74,14 @@ public class Receiver extends Thread implements DatagramRecycler {
             @NonNull EndpointConfiguration configuration
     ) {
         this.socket = socket;
-        this.receiveQueue = new LinkedBlockingQueue<>(configuration.getReceiveDatagramQueueSizeLimit());
+        this.receiveQueue = new LinkedBlockingQueue<>( configuration.getReceiveDatagramQueueSizeLimit() );
         this.targetReceivedQueue = targetReceivedQueue;
-        setMaxDatagramSize(configuration.getMaxDatagramSize());
+        setMaxDatagramSize( configuration.getMaxDatagramSize() );
         receiveTargetBlockingTimeout = configuration.getReceiveTargetBlockingTimeout();
         this.receiverState = ReceiverState.NEW;
 
-        setDaemon(true);
-        setName(configuration.getEndpointName() + ".Receiver");
+        setDaemon( true );
+        setName( configuration.getEndpointName() + ".Receiver" );
     }
 
     /**
@@ -90,14 +89,15 @@ public class Receiver extends Thread implements DatagramRecycler {
      */
     private DatagramPacket poll() {
         boolean isEmpty;
-        synchronized (receiveQueue) {
+        synchronized( receiveQueue ) {
             isEmpty = receiveQueue.isEmpty();
         }
-        if (isEmpty) {
+        if ( isEmpty ) {
             byte[] buffer = new byte[maxDatagramSize];
-            return new DatagramPacket(buffer, buffer.length);
-        } else {
-            synchronized (receiveQueue) {
+            return new DatagramPacket( buffer, buffer.length );
+        }
+        else {
+            synchronized( receiveQueue ) {
                 return receiveQueue.poll();
             }
         }
@@ -111,48 +111,50 @@ public class Receiver extends Thread implements DatagramRecycler {
      * datagram does not match the required size constraints)
      */
     @Override
-    public boolean giveBack(DatagramPacket datagram) {
-        if (datagram == null) {
+    public boolean giveBack( DatagramPacket datagram ) {
+        if ( datagram == null ) {
             return false;
         }
-        if (datagram.getLength() != maxDatagramSize) {
+        if ( datagram.getLength() != maxDatagramSize ) {
             return false;
         }
-        return receiveQueue.offer(datagram);
+        return receiveQueue.offer( datagram );
     }
 
     @Override
     public void run() {
-        setReceiverState(ReceiverState.ACTIVE);
+        setReceiverState( ReceiverState.ACTIVE );
         long counter = 0;
         boolean offered;
         try {
-            while (!isInterrupted()) {
+            while ( !isInterrupted() ) {
                 try {
                     DatagramPacket datagram = poll();
-                    socket.receive(datagram);
+                    socket.receive( datagram );
                     ReceivedDatagram receivedDatagram = new ReceivedDatagram(
                             datagram,
                             Instant.now(),
                             counter++,
-                            (short) 0
+                            (short)0
                     );
                     offered = targetReceivedQueue.offer(
                             receivedDatagram,
                             receiveTargetBlockingTimeout,
                             TimeUnit.MILLISECONDS
                     );
-                    if (!offered) {
-                        throw new IOException("Timeout on offering a ReceivedDatagram to the target queue");
+                    if ( !offered ) {
+                        throw new IOException( "Timeout on offering a ReceivedDatagram to the target queue" );
                     }
-                } catch (InterruptedIOException | InterruptedException ignored) {
+                }
+                catch ( InterruptedIOException | InterruptedException ignored ) {
                     break;
                 }
             }
-            setReceiverState(ReceiverState.STOP);
-        } catch (IOException e) {
+            setReceiverState( ReceiverState.STOP );
+        }
+        catch ( IOException e ) {
             e.printStackTrace();
-            setReceiverState(ReceiverState.ERROR);
+            setReceiverState( ReceiverState.ERROR );
         }
     }
 
@@ -161,9 +163,9 @@ public class Receiver extends Thread implements DatagramRecycler {
      *
      * @param listener the listener to add
      */
-    public void addListener(@NonNull ReceiverStateListener listener) {
-        synchronized (stateListenerSet) {
-            stateListenerSet.add(listener);
+    public void addListener( @NonNull ReceiverStateListener listener ) {
+        synchronized( stateListenerSet ) {
+            stateListenerSet.add( listener );
         }
     }
 
@@ -172,9 +174,9 @@ public class Receiver extends Thread implements DatagramRecycler {
      *
      * @param listener the listener to remove
      */
-    public void removeListener(@NonNull ReceiverStateListener listener) {
-        synchronized (stateListenerSet) {
-            stateListenerSet.remove(listener);
+    public void removeListener( @NonNull ReceiverStateListener listener ) {
+        synchronized( stateListenerSet ) {
+            stateListenerSet.remove( listener );
         }
     }
 
@@ -185,17 +187,17 @@ public class Receiver extends Thread implements DatagramRecycler {
      * @param maxDatagramSize the new limit on the datagram size
      * @throws IllegalArgumentException if the limit is non-positive
      */
-    public void setMaxDatagramSize(int maxDatagramSize) {
-        if (maxDatagramSize <= 0) {
-            throw new IllegalArgumentException("Cannot set a non-positive maxDatagramSize");
+    public void setMaxDatagramSize( int maxDatagramSize ) {
+        if ( maxDatagramSize <= 0 ) {
+            throw new IllegalArgumentException( "Cannot set a non-positive maxDatagramSize" );
         }
 
         int oldMaxDatagramSize = this.maxDatagramSize;
         this.maxDatagramSize = maxDatagramSize;
 
-        if (maxDatagramSize != oldMaxDatagramSize) {
+        if ( maxDatagramSize != oldMaxDatagramSize ) {
             // drop all datagrams because they now have the wrong buffer size
-            synchronized (receiveQueue) {
+            synchronized( receiveQueue ) {
                 receiveQueue.clear();
             }
         }
@@ -205,7 +207,7 @@ public class Receiver extends Thread implements DatagramRecycler {
      * @return the limit on the size if the buffering queue of datagrams
      */
     public int getReceiveDatagramQueueSizeLimit() {
-        synchronized (receiveQueue) {
+        synchronized( receiveQueue ) {
             return receiveQueue.size() + receiveQueue.remainingCapacity();
         }
     }
@@ -215,10 +217,10 @@ public class Receiver extends Thread implements DatagramRecycler {
      *
      * @param receiveTargetBlockingTimeout the positive timeout in milliseconds to set
      */
-    public void setReceiveTargetBlockingTimeout(int receiveTargetBlockingTimeout) {
-        if (receiveTargetBlockingTimeout <= 0) {
-            throw new IllegalArgumentException("Cannot set a non-positive" +
-                    " receiveTargetBlockingTimeout for a Receiver");
+    public void setReceiveTargetBlockingTimeout( int receiveTargetBlockingTimeout ) {
+        if ( receiveTargetBlockingTimeout <= 0 ) {
+            throw new IllegalArgumentException( "Cannot set a non-positive" +
+                    " receiveTargetBlockingTimeout for a Receiver" );
         }
         this.receiveTargetBlockingTimeout = receiveTargetBlockingTimeout;
     }
@@ -229,15 +231,16 @@ public class Receiver extends Thread implements DatagramRecycler {
      *
      * @param newState the new state to transition to
      */
-    private void setReceiverState(@NonNull ReceiverState newState) {
-        synchronized (stateListenerSet) {
-            stateListenerSet.forEach(l -> {
+    private void setReceiverState( @NonNull ReceiverState newState ) {
+        synchronized( stateListenerSet ) {
+            stateListenerSet.forEach( l -> {
                 try {
-                    l.beforeStateChange(Receiver.this, newState);
-                } catch (Exception e) {
+                    l.beforeStateChange( Receiver.this, newState );
+                }
+                catch ( Exception e ) {
                     e.printStackTrace();
                 }
-            });
+            } );
         }
         receiverState = newState;
     }

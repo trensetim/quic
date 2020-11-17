@@ -1,9 +1,9 @@
 package com.timtrense.quic.impl;
 
+import java.nio.ByteBuffer;
+
 import at.favre.lib.crypto.HKDF;
 import org.junit.Test;
-
-import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -22,7 +22,7 @@ public class HkdfUtilTest {
                         )
                 )
         );
-        assertEquals("quic hp", decodedLabel);
+        assertEquals( "quic hp", decodedLabel );
     }
 
     @Test
@@ -34,7 +34,7 @@ public class HkdfUtilTest {
                         )
                 )
         );
-        assertEquals("quic iv", decodedLabel);
+        assertEquals( "quic iv", decodedLabel );
     }
 
     @Test
@@ -46,7 +46,7 @@ public class HkdfUtilTest {
                         )
                 )
         );
-        assertEquals("quic key", decodedLabel);
+        assertEquals( "quic key", decodedLabel );
     }
 
     @Test
@@ -58,7 +58,7 @@ public class HkdfUtilTest {
                         )
                 )
         );
-        assertEquals("quic ku", decodedLabel);
+        assertEquals( "quic ku", decodedLabel );
     }
 
     @Test
@@ -70,7 +70,7 @@ public class HkdfUtilTest {
                         )
                 )
         );
-        assertEquals("client in", decodedLabel);
+        assertEquals( "client in", decodedLabel );
     }
 
     @Test
@@ -82,7 +82,7 @@ public class HkdfUtilTest {
                         )
                 )
         );
-        assertEquals("server in", decodedLabel);
+        assertEquals( "server in", decodedLabel );
     }
 
     @Test
@@ -90,8 +90,8 @@ public class HkdfUtilTest {
         // see https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5.8
         byte[] expanded = HkdfUtil.tlsExpandLabel(
                 HKDF.fromHmacSha256(), /*todo: is that hash correct?*/
-                HkdfUtil.QUIC_SECRET_KEY_SECRET, HkdfUtil.LABEL_QUIC_KEY, null, (128 / 8));
-        assertArrayEquals(HkdfUtil.QUIC_RETRY_SECRET_KEY, expanded);
+                HkdfUtil.QUIC_SECRET_KEY_SECRET, HkdfUtil.LABEL_QUIC_KEY, null, ( 128 / 8 ) );
+        assertArrayEquals( HkdfUtil.QUIC_RETRY_SECRET_KEY, expanded );
     }
 
     @Test
@@ -99,8 +99,8 @@ public class HkdfUtilTest {
         // see https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5.8
         byte[] expanded = HkdfUtil.tlsExpandLabel(
                 HKDF.fromHmacSha256(), /*todo: is that hash correct?*/
-                HkdfUtil.QUIC_SECRET_KEY_SECRET, HkdfUtil.LABEL_QUIC_IV, null, (96 / 8));
-        assertArrayEquals(HkdfUtil.QUIC_RETRY_NONCE, expanded);
+                HkdfUtil.QUIC_SECRET_KEY_SECRET, HkdfUtil.LABEL_QUIC_IV, null, ( 96 / 8 ) );
+        assertArrayEquals( HkdfUtil.QUIC_RETRY_NONCE, expanded );
     }
 
 }

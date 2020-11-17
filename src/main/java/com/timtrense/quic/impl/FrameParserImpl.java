@@ -1,7 +1,6 @@
 package com.timtrense.quic.impl;
 
 import java.nio.ByteBuffer;
-
 import lombok.Data;
 import lombok.NonNull;
 
@@ -24,7 +23,7 @@ public class FrameParserImpl implements FrameParser {
             @NonNull Packet containingPacket,
             @NonNull ByteBuffer data,
             int frameIndex,
-            int maxLength)
+            int maxLength )
             throws QuicParsingException {
         return null; //TODO implement
     }

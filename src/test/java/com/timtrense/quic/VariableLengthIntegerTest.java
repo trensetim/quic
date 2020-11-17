@@ -1,8 +1,8 @@
 package com.timtrense.quic;
 
-import org.junit.Test;
-
 import java.nio.ByteBuffer;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 

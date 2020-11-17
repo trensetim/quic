@@ -1,9 +1,9 @@
 package com.timtrense.quic.impl;
 
+import java.util.Set;
+
 import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.EncryptionLevel;
-
-import java.util.Set;
 
 /**
  * Basic abstraction of a QUIC connection
@@ -30,6 +30,6 @@ public interface Connection {
      * @param encryptionLevel the protection level, not null
      * @return the protection, if already known
      */
-    PacketProtection getPacketProtection(EncryptionLevel encryptionLevel);
+    PacketProtection getPacketProtection( EncryptionLevel encryptionLevel );
 
 }

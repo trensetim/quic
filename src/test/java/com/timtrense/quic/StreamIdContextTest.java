@@ -1,8 +1,9 @@
 package com.timtrense.quic;
 
+import org.junit.Test;
+
 import com.timtrense.quic.impl.base.StreamIdContext;
 import com.timtrense.quic.impl.base.StreamIdContextImpl;
-import org.junit.Test;
 
 import static com.timtrense.quic.EndpointRole.CLIENT;
 import static com.timtrense.quic.EndpointRole.SERVER;

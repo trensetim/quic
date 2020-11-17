@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -82,24 +81,24 @@ public class DatagramParser implements Runnable {
             @NonNull PacketParser packetParser
     ) {
         this.targetParsedQueue = targetReceivedQueue;
-        this.parseQueue = new LinkedBlockingQueue<>(configuration.getParseDatagramQueueSizeLimit());
+        this.parseQueue = new LinkedBlockingQueue<>( configuration.getParseDatagramQueueSizeLimit() );
         this.packetParser = packetParser;
-        setParsedTargetBlockingTimeout(configuration.getParsedTargetBlockingTimeout());
+        setParsedTargetBlockingTimeout( configuration.getParsedTargetBlockingTimeout() );
         this.state = DatagramParserState.NEW;
     }
 
     @Override
     public void run() {
-        setState(DatagramParserState.ACTIVE);
+        setState( DatagramParserState.ACTIVE );
         boolean offered;
-        List<Packet> packets = new ArrayList<>(5);
+        List<Packet> packets = new ArrayList<>( 5 );
         DatagramPacket datagram = null;
         try {
             parsingPackets:
-            while (!Thread.currentThread().isInterrupted()) {
+            while ( !Thread.currentThread().isInterrupted() ) {
                 try {
-                    if (datagramRecycler != null && datagram != null) {
-                        datagramRecycler.giveBack(datagram);
+                    if ( datagramRecycler != null && datagram != null ) {
+                        datagramRecycler.giveBack( datagram );
                     }
                     packets.clear();
 
@@ -108,62 +107,67 @@ public class DatagramParser implements Runnable {
                     datagram = receivedDatagram.getDatagram();
 
                     try {
-                        ByteBuffer data = ByteBuffer.wrap(datagram.getData(),
-                                datagram.getOffset(), datagram.getLength());
+                        ByteBuffer data = ByteBuffer.wrap( datagram.getData(),
+                                datagram.getOffset(), datagram.getLength() );
 
                         int packetIndex = 0;
-                        while (data.remaining() > 0) {
-                            Packet p = packetParser.parsePacket(receivedDatagram, data, packetIndex);
-                            if (p == null) {
-                                throw new MalformedDatagramException(receivedDatagram, data);
+                        while ( data.remaining() > 0 ) {
+                            Packet p = packetParser.parsePacket( receivedDatagram, data, packetIndex );
+                            if ( p == null ) {
+                                throw new MalformedDatagramException( receivedDatagram, data );
                             }
-                            packets.add(p);
+                            packets.add( p );
                             packetIndex++;
                         }
 
-                    } catch (OutOfOrderProtectedPacketException ignored) {
-                        synchronized (parseQueue) {
+                    }
+                    catch ( OutOfOrderProtectedPacketException ignored ) {
+                        synchronized( parseQueue ) {
                             /*offered =*/
-                            parseQueue.offer(receivedDatagram, 250, TimeUnit.MILLISECONDS);
+                            parseQueue.offer( receivedDatagram, 250, TimeUnit.MILLISECONDS );
                             // if we cannot offer again, just drop the datagram. it was out-of-order anyway and
                             // the peer will retransmit it if necessary
                         }
                         continue /*parsingPackets*/;
-                    } catch (Exception e) {
+                    }
+                    catch ( Exception e ) {
                         e.printStackTrace();
                         // if datagrams are unable to be FULLY parsed, just drop them
                         continue /*parsingPackets*/;
                     }
 
                     ConnectionId connectionForDatagram = null;
-                    for (Packet p : packets) {
-                        if (connectionForDatagram == null) {
+                    for ( Packet p : packets ) {
+                        if ( connectionForDatagram == null ) {
 
                             // this cannot be null, because that would be illegal
                             // and would have thrown an error while parsing
                             connectionForDatagram = p.getDestinationConnectionId();
-                        } else if (!connectionForDatagram.equals(p.getDestinationConnectionId())) {
+                        }
+                        else if ( !connectionForDatagram.equals( p.getDestinationConnectionId() ) ) {
                             // "Senders MUST NOT coalesce QUIC packets with different connection IDs into
                             // a single UDP datagram." QUIC Spec/Section 12.2
                             continue parsingPackets; // drop entire datagram
                         }
                     }
-                    for (Packet p : packets) {
-                        synchronized (targetParsedQueue) {
-                            offered = targetParsedQueue.offer(p, parsedTargetBlockingTimeout, TimeUnit.MILLISECONDS);
+                    for ( Packet p : packets ) {
+                        synchronized( targetParsedQueue ) {
+                            offered = targetParsedQueue.offer( p, parsedTargetBlockingTimeout, TimeUnit.MILLISECONDS );
                         }
-                        if (!offered) {
-                            throw new IOException("Timeout on offering a Packet to the target queue");
+                        if ( !offered ) {
+                            throw new IOException( "Timeout on offering a Packet to the target queue" );
                         }
                     }
-                } catch (InterruptedException ignored) {
+                }
+                catch ( InterruptedException ignored ) {
                     break;
                 }
             }
-            setState(DatagramParserState.STOP);
-        } catch (Exception e) {
+            setState( DatagramParserState.STOP );
+        }
+        catch ( Exception e ) {
             e.printStackTrace();
-            setState(DatagramParserState.ERROR);
+            setState( DatagramParserState.ERROR );
         }
     }
 
@@ -171,7 +175,7 @@ public class DatagramParser implements Runnable {
      * @return the limit on the size if the buffering queue of datagrams
      */
     public int getParseDatagramQueueSizeLimit() {
-        synchronized (parseQueue) {
+        synchronized( parseQueue ) {
             return parseQueue.size() + parseQueue.remainingCapacity();
         }
     }
@@ -181,10 +185,10 @@ public class DatagramParser implements Runnable {
      *
      * @param parsedTargetBlockingTimeout the positive timeout in milliseconds to set
      */
-    public void setParsedTargetBlockingTimeout(int parsedTargetBlockingTimeout) {
-        if (parsedTargetBlockingTimeout <= 0) {
-            throw new IllegalArgumentException("Cannot set a non-positive" +
-                    " parsedTargetBlockingTimeout for a DatagramParser");
+    public void setParsedTargetBlockingTimeout( int parsedTargetBlockingTimeout ) {
+        if ( parsedTargetBlockingTimeout <= 0 ) {
+            throw new IllegalArgumentException( "Cannot set a non-positive" +
+                    " parsedTargetBlockingTimeout for a DatagramParser" );
         }
         this.parsedTargetBlockingTimeout = parsedTargetBlockingTimeout;
     }
@@ -194,9 +198,9 @@ public class DatagramParser implements Runnable {
      *
      * @param listener the listener to add
      */
-    public void addListener(@NonNull DatagramParserStateListener listener) {
-        synchronized (stateListenerSet) {
-            stateListenerSet.add(listener);
+    public void addListener( @NonNull DatagramParserStateListener listener ) {
+        synchronized( stateListenerSet ) {
+            stateListenerSet.add( listener );
         }
     }
 
@@ -205,9 +209,9 @@ public class DatagramParser implements Runnable {
      *
      * @param listener the listener to remove
      */
-    public void removeListener(@NonNull DatagramParserStateListener listener) {
-        synchronized (stateListenerSet) {
-            stateListenerSet.remove(listener);
+    public void removeListener( @NonNull DatagramParserStateListener listener ) {
+        synchronized( stateListenerSet ) {
+            stateListenerSet.remove( listener );
         }
     }
 
@@ -217,15 +221,16 @@ public class DatagramParser implements Runnable {
      *
      * @param newState the new state to transition to
      */
-    private void setState(@NonNull DatagramParserState newState) {
-        synchronized (stateListenerSet) {
-            stateListenerSet.forEach(l -> {
+    private void setState( @NonNull DatagramParserState newState ) {
+        synchronized( stateListenerSet ) {
+            stateListenerSet.forEach( l -> {
                 try {
-                    l.beforeStateChange(DatagramParser.this, newState);
-                } catch (Exception e) {
+                    l.beforeStateChange( DatagramParser.this, newState );
+                }
+                catch ( Exception e ) {
                     e.printStackTrace();
                 }
-            });
+            } );
         }
         state = newState;
     }

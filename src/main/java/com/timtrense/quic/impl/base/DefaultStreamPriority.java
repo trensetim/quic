@@ -1,10 +1,11 @@
 package com.timtrense.quic.impl.base;
 
-import com.timtrense.quic.StreamPriority;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+
+import com.timtrense.quic.StreamPriority;
 
 /**
  * The default implementation of {@link com.timtrense.quic.StreamPriority}
