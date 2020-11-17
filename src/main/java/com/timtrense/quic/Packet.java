@@ -123,7 +123,7 @@ public interface Packet {
      * @throws NullPointerException if the packet contains required fields with null value
      *                              OR any contained frame does
      */
-    long getPacketLength() throws NullPointerException;
+    long getPacketLength();
 
     /**
      * Checks the header of this packet but NOT whether all packed frames are valid too.
