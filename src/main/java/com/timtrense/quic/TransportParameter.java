@@ -1,10 +1,10 @@
 package com.timtrense.quic;
 
 /**
- * @param <Datatype> the data type of the hold value
+ * @param <T> the data type of the hold value
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-18.2">QUIC Spec/Section 18.2</a>
  */
-public interface TransportParameter<Datatype> {
+public interface TransportParameter<T> {
 
     /**
      * @return the id of the parameter
@@ -19,5 +19,5 @@ public interface TransportParameter<Datatype> {
     /**
      * @return the actual hold value
      */
-    Datatype getValue();
+    T getValue();
 }
