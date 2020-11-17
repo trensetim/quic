@@ -160,6 +160,7 @@ public class DatagramParser implements Runnable {
                     }
                 }
                 catch ( InterruptedException ignored ) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
             }
