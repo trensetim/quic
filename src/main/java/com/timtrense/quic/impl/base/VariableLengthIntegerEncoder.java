@@ -196,4 +196,20 @@ public class VariableLengthIntegerEncoder {
         }
         return value;
     }
+
+    /**
+     * encodes a classic java integer (or long) into the given bytes.
+     *
+     * @param value the actual value to encode
+     * @param data  the output for the binary representation
+     * @param off   the offset in the array
+     * @param len   the length to encode the int in (for an int not more than 4 (or 8 for long), otherwise arithmetic
+     *              interesting things will happen)
+     */
+    public static void encodeFixedLengthInteger( long value, byte[] data, int off, int len ) {
+        for ( int i = len - 1; i >= 0; i-- ) {
+            data[i + off] = (byte)( value & 0xff );
+            value >>= 8;
+        }
+    }
 }

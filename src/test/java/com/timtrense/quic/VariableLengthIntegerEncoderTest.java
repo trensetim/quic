@@ -117,4 +117,63 @@ public class VariableLengthIntegerEncoderTest {
         assertEquals( buffer.capacity(), encodeLength );
         assertArrayEquals( buffer.array(), bufferTest.array() );
     }
+
+    @Test
+    public void decodeFixedLengthInteger_byteArrayOfZeros_0() {
+        long fli = VariableLengthIntegerEncoder.decodeFixedLengthInteger( new byte[]{0, 0, 0, 0, 0, 0}, 0, 1 );
+        assertEquals( 0, fli );
+    }
+
+    @Test
+    public void decodeFixedLengthInteger_byteArrayOfZerosWith17_17() {
+        long fli = VariableLengthIntegerEncoder.decodeFixedLengthInteger( new byte[]{17, 0, 0, 0, 0, 0}, 0, 1 );
+        assertEquals( 17, fli );
+    }
+
+    @Test
+    public void decodeFixedLengthInteger_byteArrayOfZerosWith17Offset1_1() {
+        long fli = VariableLengthIntegerEncoder.decodeFixedLengthInteger( new byte[]{0, 17, 0, 0, 0, 0}, 1, 1 );
+        assertEquals( 17, fli );
+    }
+
+    @Test
+    public void decodeFixedLengthInteger_byteArrayOfZerosWith17Length2_1() {
+        long fli = VariableLengthIntegerEncoder.decodeFixedLengthInteger( new byte[]{0, 17, 0, 0, 0, 0}, 0, 2 );
+        assertEquals( 17, fli );
+    }
+
+    @Test
+    public void encodeFixedLengthInteger_0_byteArrayOfZeros() {
+        byte[] out = new byte[10];
+        VariableLengthIntegerEncoder.encodeFixedLengthInteger( 0, out, 0, 4 );
+        assertArrayEquals( new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, out );
+    }
+
+    @Test
+    public void encodeFixedLengthInteger_1_byteArrayOfZerosLeading1() {
+        byte[] out = new byte[10];
+        VariableLengthIntegerEncoder.encodeFixedLengthInteger( 1, out, 0, 1 );
+        assertArrayEquals( new byte[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, out );
+    }
+
+    @Test
+    public void encodeFixedLengthInteger_17_byteArrayOfZerosLeading17() {
+        byte[] out = new byte[10];
+        VariableLengthIntegerEncoder.encodeFixedLengthInteger( 17, out, 0, 1 );
+        assertArrayEquals( new byte[]{17, 0, 0, 0, 0, 0, 0, 0, 0, 0}, out );
+    }
+
+    @Test
+    public void encodeFixedLengthInteger_17Length2_byteArrayOfZerosLeading0And17() {
+        byte[] out = new byte[10];
+        VariableLengthIntegerEncoder.encodeFixedLengthInteger( 17, out, 0, 2 );
+        assertArrayEquals( new byte[]{0, 17, 0, 0, 0, 0, 0, 0, 0, 0}, out );
+    }
+
+    @Test
+    public void encodeFixedLengthInteger_258Length2Offset1_byteArrayOfZerosLeading0And1And2() {
+        byte[] out = new byte[10];
+        VariableLengthIntegerEncoder.encodeFixedLengthInteger( 258, out, 1, 2 );
+        assertArrayEquals( new byte[]{0, 1, 2, 0, 0, 0, 0, 0, 0, 0}, out );
+    }
 }
