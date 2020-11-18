@@ -12,7 +12,7 @@ import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 import com.timtrense.quic.impl.exception.MalformedFrameException;
 import com.timtrense.quic.impl.exception.QuicParsingException;
 import com.timtrense.quic.impl.frames.CryptoFrameImpl;
-import com.timtrense.quic.impl.frames.PaddingFrameImpl;
+import com.timtrense.quic.impl.frames.MultiPaddingFrameImpl;
 
 /**
  * Parsing algorithm for frames within a packet
@@ -38,10 +38,15 @@ public class FrameParserImpl implements FrameParser {
                     containingPacket, data, frameIndex );
         }
 
+        maxLength -= frameType.getValue().getEncodedLengthInBytes(); // because we just parsed a varint
+
         Frame result;
         switch ( frameType.getGeneralType() ) {
             case PADDING:
-                result = new PaddingFrameImpl( frameType );
+                // we just detected the start of AT LEAST one padding frame.
+                // lets try finding more consecutive paddings to reduce
+                // amount of instantiated padding frame objects
+                result = parseMultiPaddingFrame( data, maxLength );
                 break;
             case CRYPTO:
                 result = new CryptoFrameImpl( frameType );
@@ -53,6 +58,19 @@ public class FrameParserImpl implements FrameParser {
                         containingPacket, data, frameIndex );
         }
         return result;
+    }
+
+    private Frame parseMultiPaddingFrame( ByteBuffer data, int maxLength ) {
+        byte[] rawData = data.array();
+        int offset = data.position();
+        int paddingCount;
+        for ( paddingCount = 0; paddingCount < maxLength; paddingCount++ ) {
+            if ( rawData[offset + paddingCount] != FrameType.PADDING.getLongValue() ) {
+                break;
+            }
+        }
+        paddingCount++; // because already one Padding Frame was parsed by top parseFrame()
+        return new MultiPaddingFrameImpl( paddingCount );
     }
 
     private void parseFrame( CryptoFrameImpl frame, Packet containingPacket,

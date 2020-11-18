@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.EndpointRole;
+import com.timtrense.quic.Frame;
 import com.timtrense.quic.HexByteStringConvertHelper;
 import com.timtrense.quic.Packet;
 import com.timtrense.quic.ProtocolVersion;
@@ -14,11 +15,17 @@ import com.timtrense.quic.VariableLengthInteger;
 import com.timtrense.quic.impl.base.ConnectionIdImpl;
 import com.timtrense.quic.impl.base.PacketNumberImpl;
 import com.timtrense.quic.impl.exception.QuicParsingException;
+import com.timtrense.quic.impl.frames.CryptoFrameImpl;
+import com.timtrense.quic.impl.frames.MultiPaddingFrameImpl;
+import com.timtrense.quic.impl.frames.PaddingFrameImpl;
 import com.timtrense.quic.impl.packets.InitialPacketImpl;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @see com.timtrense.quic.impl.PacketParserImpl
@@ -110,6 +117,15 @@ public class PacketParserImplTest {
         assertEquals( VariableLengthInteger.ZERO, initialPacket.getTokenLength() );
         assertArrayEquals( null, initialPacket.getToken() );
         assertEquals( new PacketNumberImpl( 2 ), initialPacket.getPacketNumber() );
+
+        assertNotNull( initialPacket.getPayload() );
+        assertFalse( initialPacket.getPayload().isEmpty() );
+        assertEquals( 2, initialPacket.getPayload().size() );
+
+        Frame firstFrame = initialPacket.getPayload().get( 0 );
+        Frame secondFrame = initialPacket.getPayload().get( 1 );
+        assertTrue( firstFrame instanceof CryptoFrameImpl );
+        assertTrue( secondFrame instanceof MultiPaddingFrameImpl );
     }
 
 }

@@ -9,26 +9,24 @@ import com.timtrense.quic.FrameType;
 /**
  * padding frame.
  * existing known frames are : {@link FrameType#PADDING}
- *
+ * <p/>
  * A PADDING frame (type=0x00) has no semantic value.  PADDING frames
  * can be used to increase the size of a packet.  Padding can be used to
  * increase an initial client packet to the minimum required size, or to
  * provide protection against traffic analysis for protected packets.
- *
+ * <p/>
  * PADDING frames are formatted as shown in Figure 23, which shows that
  * PADDING frames have no content.  That is, a PADDING frame consists of
  * the single byte that identifies the frame as a PADDING frame.
+ * <p/>
+ * <b>Note:</b> Implementations should use {@link MultiPaddingFrameImpl}
+ * in order to not need to instantiate absurd amounts of {@link PaddingFrameImpl}
  *
  * @author Tim Trense
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-19.3">QUIC Spec/Section 19.3</a>
  */
 @Data
 public class PaddingFrameImpl implements Frame {
-
-    // TODO: optimize object construction on consecutive padding frames
-    // There are frequent cases in which multiple consecutive padding frames are used to fill up a
-    // packet. The current implementation needs to create an instance for each of those frames, whereas
-    // it might be sufficient to only create one instance which knows how many padding bytes are used
 
     private final FrameType type;
 
@@ -49,7 +47,8 @@ public class PaddingFrameImpl implements Frame {
 
     @Override
     public long getFrameLength() {
-        // return type.getValue().getEncodedLengthInBytes(); // this will always be 1, because type.getValue() == 0
+        // this will always be 1, because type.getValue() == 0
+        // return type.getValue().getEncodedLengthInBytes();
         return 1;
     }
 }
