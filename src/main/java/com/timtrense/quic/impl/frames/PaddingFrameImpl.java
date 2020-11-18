@@ -3,6 +3,7 @@ package com.timtrense.quic.impl.frames;
 import lombok.Data;
 
 import com.timtrense.quic.Frame;
+import com.timtrense.quic.FrameGeneralType;
 import com.timtrense.quic.FrameType;
 
 /**
@@ -24,14 +25,19 @@ import com.timtrense.quic.FrameType;
 @Data
 public class PaddingFrameImpl implements Frame {
 
+    // TODO: optimize object construction on consecutive padding frames
+    // There are frequent cases in which multiple consecutive padding frames are used to fill up a
+    // packet. The current implementation needs to create an instance for each of those frames, whereas
+    // it might be sufficient to only create one instance which knows how many padding bytes are used
+
     private final FrameType type;
 
     public PaddingFrameImpl( FrameType frameType ) {
         this.type = frameType;
-        if ( type != FrameType.PADDING ) {
+        if ( type.getGeneralType() != FrameGeneralType.PADDING ) {
             throw new IllegalArgumentException(
-                    "Cannot build an AckFrame with FrameType other than "
-                            + FrameType.PADDING.name()
+                    "Cannot build a PaddingFrame with FrameGeneralType other than "
+                            + FrameGeneralType.PADDING.name()
             );
         }
     }
