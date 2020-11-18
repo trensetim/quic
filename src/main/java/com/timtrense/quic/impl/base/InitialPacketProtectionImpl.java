@@ -1,11 +1,14 @@
 package com.timtrense.quic.impl.base;
 
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.Data;
 import lombok.NonNull;
@@ -44,6 +47,8 @@ public class InitialPacketProtectionImpl implements PacketProtection {
     private @NonNull EndpointRole endpointRole;
     private byte[] clientInitialSecret;
     private byte[] serverInitialSecret;
+    private byte[] clientInitialKey;
+    private byte[] clientInitialIV;
     private byte[] headerProtectionSecret;
     private Cipher headerProtectionCipher;
 
@@ -108,6 +113,8 @@ public class InitialPacketProtectionImpl implements PacketProtection {
         byte[] initialSecret = extractInitialSecret( clientDestinationConnectionId );
         clientInitialSecret = expandInitialClientSecret( initialSecret );
         serverInitialSecret = expandInitialServerSecret( initialSecret );
+        clientInitialKey = expandInitialQuicKey( clientInitialSecret );
+        clientInitialIV = expandInitialQuicIv( clientInitialSecret );
         headerProtectionSecret = expandInitialHeaderProtection( clientInitialSecret );
         // https://tools.ietf.org/html/draft-ietf-quic-tls-27#section-5.4.3
         // "AEAD_AES_128_GCM and AEAD_AES_128_CCM use 128-bit AES [AES] in electronic code-book (ECB) mode."
@@ -129,4 +136,65 @@ public class InitialPacketProtectionImpl implements PacketProtection {
         }
         return null;
     }
+
+    /**
+     * Derives the 16 bytes nonce used as a {@link GCMParameterSpec GCM Parameter} for AEAD_AES_128_GCM.
+     * <p/>
+     * "The nonce, N, is formed by combining the packet
+     * protection IV with the packet number. The 62 bits of the
+     * reconstructed QUIC packet number in network byte order are left-
+     * padded with zeros to the size of the IV. The exclusive OR of the
+     * padded packet number and the IV forms the AEAD nonce."
+     * Quote from
+     * <a href="https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5.3">QUIC Spec-TLS/Section 5.3</a>
+     *
+     * @param packetNumber the packet number to combine with the input vector
+     * @return the nonce for AEAD_AES_128_GCM, never null, always 16 bytes length
+     */
+    public byte[] deriveAeadNonce( long packetNumber ) {
+        byte[] nonce = new byte[12]; // java arrays are prefilled with 0
+        VariableLengthIntegerEncoder.encodeFixedLengthInteger( packetNumber, nonce, 4, 8 );
+        for ( int i = 0; i < nonce.length; i++ ) {
+            nonce[i] ^= clientInitialIV[i];
+        }
+        return nonce;
+    }
+
+    /**
+     * Performs AEAD_AES_128_GCM decryption using this {@link #clientInitialKey}.
+     * <p/>
+     * "Initial packets use AEAD_AES_128_GCM with keys derived from the
+     * Destination Connection ID field of the first Initial packet sent
+     * by the client; see Section 5.2."
+     * Quote from
+     * <a href="https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5">QUIC Spec-TLS/Section 5</a>
+     *
+     * Hint: all exceptions thrown by this method are of subtypes of {@link GeneralSecurityException}
+     *
+     * @param message        the ciphertext to decrypt
+     * @param associatedData the associated data (in QUIC: the unprotected packet header including the unprotected
+     *                       packet number)
+     * @param nonce          the nonce derived from the packet number (see {@link #deriveAeadNonce(long)})
+     * @return the decrypted ciphertext, thus the plaintext of the message
+     * @throws BadPaddingException                if decryption somehow fails
+     * @throws NoSuchPaddingException             if decryption somehow fails
+     * @throws IllegalBlockSizeException          if decryption somehow fails
+     * @throws InvalidAlgorithmParameterException if decryption somehow fails
+     * @throws InvalidKeyException                if decryption somehow fails
+     * @throws NoSuchAlgorithmException           if decryption somehow fails
+     */
+    public byte[] aeadDecrypt( byte[] message, byte[] associatedData, byte[] nonce )
+            throws BadPaddingException, IllegalBlockSizeException,
+            InvalidAlgorithmParameterException, InvalidKeyException,
+            NoSuchPaddingException, NoSuchAlgorithmException {
+        Cipher aeadCipher = Cipher.getInstance( "AES/GCM/NoPadding" );
+        SecretKeySpec secretKey = new SecretKeySpec( clientInitialKey, "AES" );
+
+        GCMParameterSpec parameterSpec = new GCMParameterSpec( 128 /* AEAD_AES_128_GCM */, nonce );
+
+        aeadCipher.init( Cipher.DECRYPT_MODE, secretKey, parameterSpec );
+        aeadCipher.updateAAD( associatedData );
+        return aeadCipher.doFinal( message );
+    }
+
 }

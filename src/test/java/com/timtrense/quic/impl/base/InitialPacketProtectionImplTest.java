@@ -211,4 +211,16 @@ public class InitialPacketProtectionImplTest {
                 (byte)0x1e, (byte)0x9c, (byte)0xdb, (byte)0x99, (byte)0x09
         }, Arrays.copyOfRange( mask, 0, 5 ) );
     }
+
+    @Test
+    public void deriveAeadNonce_givenAppendixADefinedClientConnectionId_correct()
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+        // The examples of Appendix A do not state the nonce to by created, but by testing the code manually
+        // the nonce was found to be the value tested for here
+        InitialPacketProtectionImpl ippi = new InitialPacketProtectionImpl( EndpointRole.SERVER );
+        ippi.initialize( clientConnectionId );
+        byte[] nonce = ippi.deriveAeadNonce( 2 /* packet number from the appendix a example */ );
+        assertArrayEquals( new byte[]{(byte)0x6b, (byte)0x26, (byte)0x11, (byte)0x4b, (byte)0x9c, (byte)0xba,
+                (byte)0x2b, (byte)0x63, (byte)0xa9, (byte)0xe8, (byte)0xdd, (byte)0x4d}, nonce );
+    }
 }

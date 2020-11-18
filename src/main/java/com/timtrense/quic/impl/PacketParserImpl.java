@@ -1,6 +1,7 @@
 package com.timtrense.quic.impl;
 
 import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -131,6 +132,8 @@ public class PacketParserImpl implements PacketParser {
         InitialPacketImpl initialPacket = new InitialPacketImpl();
         initialPacket.setVersion( protocolVersion );
 
+        // ===== PARSE HEADER =====
+
         // DESTINATION CONNECTION ID
         int dstConnIdLength = remainingData.get() & 0xFF;
         // https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-17.2
@@ -178,11 +181,21 @@ public class PacketParserImpl implements PacketParser {
         remainingData.get( token );
 
         // LENGTH
+        /*
+            The length includes the packet number, as stated by
+                "Length:  The length of the remainder of the packet (that is, the
+                 Packet Number and Payload fields) in bytes, encoded as a variable-
+                 length integer (Section 16)."
+            Quote from https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-17.2
+         */
         VariableLengthInteger length = VariableLengthInteger.decode( remainingData );
         if ( length == null ) {
             throw new MalformedPacketException( "Length is no valid VariableLengthInteger",
                     datagram, remainingData, packetIndex );
         }
+        initialPacket.setDeclaredPayloadLength( length );
+
+        // ===== DECRYPT PROTECTED PARTS OF HEADER =====
 
         // PACKET NUMBER and DECRYPTED FLAGS
         // "This algorithm samples 16 bytes from the packet ciphertext." QUIC Spec-TLS/Section 5.4.3
@@ -229,8 +242,41 @@ public class PacketParserImpl implements PacketParser {
         );
         initialPacket.setPacketNumber( new PacketNumberImpl( packetNumber ) );
 
-        List<Frame> frames = frameParser.parseFrames( initialPacket, remainingData, length.intValue() );
+        // ===== DECRYPT PAYLOAD =====
+
+        // "The associated data, A, for the AEAD is the contents of the QUIC
+        //   header, starting from the first byte of either the short or long
+        //   header, up to and including the unprotected packet number."
+        // Quote from https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-5.3
+
+        int initialHeaderLength = (int)initialPacket.getHeaderLength();
+        byte[] associatedData = new byte[initialHeaderLength];
+        // copy protected header from the received input
+        System.arraycopy( remainingData.array(), remainingData.position() - initialHeaderLength,
+                associatedData, 0, initialHeaderLength );
+        // and overwrite that with the unprotected parts
+        System.arraycopy( protectedPacketNumber /*which is now unprotected*/, 0, associatedData,
+                associatedData.length - protectedPacketNumber.length, protectedPacketNumber.length );
+        associatedData[0] = decryptedFlags;
+
+        // the length includes the packet number, thus the payload length is it minus that
+        byte[] payload = new byte[length.intValue() - unprotectedPacketNumberLength];
+        remainingData.get( payload );
+        // perform decryption
+        byte[] aeadNonce = packetProtection.deriveAeadNonce( packetNumber );
+        try {
+            payload = packetProtection.aeadDecrypt( payload, associatedData, aeadNonce );
+        }
+        catch ( GeneralSecurityException e ) {
+            throw new MalformedPacketException( "Cannot decrypt initial packet", datagram, remainingData, packetIndex );
+        }
+        ByteBuffer payloadBuffer = ByteBuffer.wrap( payload );
+
+        // ===== PARSE PAYLOAD =====
+
+        List<Frame> frames = frameParser.parseFrames( initialPacket, payloadBuffer, payload.length );
         initialPacket.setPayload( frames );
+
         return initialPacket;
     }
 }
