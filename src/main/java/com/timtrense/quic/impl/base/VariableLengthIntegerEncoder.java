@@ -2,6 +2,8 @@ package com.timtrense.quic.impl.base;
 
 import java.nio.ByteBuffer;
 
+import com.timtrense.quic.VariableLengthInteger;
+
 /**
  * Utility class to encode and decode unsigned long integer values within the interval [ 0 ; 2^62-1 ] .
  *
@@ -12,6 +14,65 @@ import java.nio.ByteBuffer;
  */
 public class VariableLengthIntegerEncoder {
 
+    /**
+     * The largest number that can be encoded as a {@link VariableLengthInteger}.
+     * Equal to 2 pow 62 minus 1.
+     */
+    public static final long MAX_VALUE = 4611686018427387903L;
+
+    /**
+     * The largest number that can be encoded as a {@link VariableLengthInteger} using one byte.
+     * Equal to 2 pow 6 minus 1.
+     */
+    public static final long MAX_VALUE_1_BYTE = 63L;
+
+    /**
+     * The largest number that can be encoded as a {@link VariableLengthInteger} using two bytes.
+     * Equal to 2 pow 14 minus 1.
+     */
+    public static final long MAX_VALUE_2_BYTE = 16383L;
+
+    /**
+     * The largest number that can be encoded as a {@link VariableLengthInteger} using four bytes.
+     * Equal to 2 pow 30 minus 1.
+     */
+    public static final long MAX_VALUE_4_BYTE = 1073741823L;
+
+    /**
+     * The largest number that can be encoded as a {@link VariableLengthInteger} using eight bytes.
+     * Equal to 2 pow 62 minus 1 thus equal to {@link #MAX_VALUE}
+     */
+    public static final long MAX_VALUE_8_BYTE = MAX_VALUE;
+
+    /**
+     * The smallest number that can be encoded as a {@link VariableLengthInteger}.
+     * Equal to zero, because var-ints are by definition non-negative.
+     */
+    public static final long MIN_VALUE = 0L;
+
+    /**
+     * The bit-mask to apply to one unsigned byte to get the encoded var-int value
+     * (if that byte encodes a single-byte var-int)
+     */
+    public static final long MASK_1_BYTE = 0b00111111L;
+
+    /**
+     * The bit-mask to apply to two consecutive unsigned bytes (aka an unsigned short) to get the encoded var-int value
+     * (if that bytes encode a two-byte var-int)
+     */
+    public static final long MASK_2_BYTE = 0x3fffL;
+
+    /**
+     * The bit-mask to apply to four consecutive unsigned bytes (aka an unsigned short) to get the encoded var-int
+     * value (if that bytes encode a four-byte var-int)
+     */
+    public static final long MASK_4_BYTE = 0x3fffffffL;
+    /**
+     * The bit-mask to apply to eight consecutive unsigned bytes (aka an unsigned short) to get the encoded var-int
+     * value (if that bytes encode an eight-byte var-int)
+     */
+    public static final long MASK_8_BYTE = 0x3fffffffffffffffL;
+
     private VariableLengthIntegerEncoder() {}
 
     /**
@@ -21,19 +82,19 @@ public class VariableLengthIntegerEncoder {
      * @return the number of bytes required to encode the value or 0 if the value is out-of-bounds
      */
     public static byte getLengthInBytes( long value ) {
-        if ( value < 0 ) {
+        if ( value < MIN_VALUE ) {
             return 0;
         }
-        else if ( value <= 63L ) {
+        else if ( value <= MAX_VALUE_1_BYTE ) {
             return 1;
         }
-        else if ( value <= 16383L ) {
+        else if ( value <= MAX_VALUE_2_BYTE ) {
             return 2;
         }
-        else if ( value <= 1073741823L ) {
+        else if ( value <= MAX_VALUE_4_BYTE ) {
             return 4;
         }
-        else if ( value <= 4611686018427387903L ) {
+        else if ( value <= MAX_VALUE ) {
             return 8;
         }
         else {
@@ -52,25 +113,27 @@ public class VariableLengthIntegerEncoder {
      * @return the number of bytes added (1, 2, 4 or 8) or 0 if the value was out of bounds
      */
     public static int encode( long value, ByteBuffer buffer ) {
-        if ( value < 0 ) {
+        if ( value < MIN_VALUE ) {
             return 0;
         }
-        else if ( value <= 63 ) {
+        else if ( value <= MAX_VALUE_1_BYTE ) {
             buffer.put( (byte)value );
             return 1;
         }
-        else if ( value <= 16383L ) {
+        else if ( value <= MAX_VALUE_2_BYTE ) {
+            // TODO value >> 8 == value / 256
             buffer.put( (byte)( ( value / 256 ) | 0x40 ) );
+            // TODO (byte)value == value % 256
             buffer.put( (byte)( value % 256 ) );
             return 2;
         }
-        else if ( value <= 1073741823L ) {
+        else if ( value <= MAX_VALUE_4_BYTE ) {
             int initialPosition = buffer.position();
             buffer.putInt( (int)value );
             buffer.put( initialPosition, (byte)( buffer.get( initialPosition ) | (byte)0x80 ) );
             return 4;
         }
-        else if ( value <= 4611686018427387903L ) {
+        else if ( value <= MAX_VALUE ) {
             int initialPosition = buffer.position();
             buffer.putLong( value );
             buffer.put( initialPosition, (byte)( buffer.get( initialPosition ) | (byte)0xc0 ) );
@@ -102,16 +165,16 @@ public class VariableLengthIntegerEncoder {
 
         int lengthType = ( firstLengthByte & 0xc0 ) >> 6;
         if ( lengthType == 0 ) {
-            return buffer.get() & 0b00111111L;
+            return buffer.get() & MASK_1_BYTE;
         }
         else if ( lengthType == 1 && remaining > 1 ) {
-            return buffer.getShort() & 0x3fffL;
+            return buffer.getShort() & MASK_2_BYTE;
         }
         else if ( lengthType == 2 && remaining > 3 ) {
-            return buffer.getInt() & 0x3fffffffL;
+            return buffer.getInt() & MASK_4_BYTE;
         }
         else if ( lengthType == 3 && remaining > 7 ) {
-            return buffer.getLong() & 0x3fffffffffffffffL;
+            return buffer.getLong() & MASK_8_BYTE;
         }
         else {
             return -1;
