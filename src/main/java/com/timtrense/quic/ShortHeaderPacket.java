@@ -147,6 +147,22 @@ public interface ShortHeaderPacket extends NumberedPacket, FrameContainingPacket
          */
         sum += getLongPayloadLength();
 
-        return -sum;
+        return sum;
+    }
+
+    /**
+     * Attention:
+     * QUOTE: The length of the Destination Connection ID field is expected to be known to endpoints.
+     * FROM:  https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-5.1
+     *
+     * @return the packets length in bytes SUBTRACTED BY THE length of the connection id
+     * which callers MUST explicitly add
+     * @see Packet#getHeaderLength()
+     */
+    @Override
+    default long getHeaderLength() {
+        long sum = 1;// flags
+        sum += getPacketNumberLength();
+        return sum;
     }
 }

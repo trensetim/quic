@@ -29,6 +29,16 @@ public abstract class BaseLongHeaderPacket implements LongHeaderPacket {
      */
     @Override
     public long getPacketLength() {
+        return getHeaderLength();
+    }
+
+    /**
+     * Subclasses still need to override this. This implementation may not give the complete length
+     *
+     * @return the length of the base part of the long header packet
+     */
+    @Override
+    public long getHeaderLength() {
         // this sum will be precomputed by the compiler
         long sum = 1L // flags
                 + 4L // version-length

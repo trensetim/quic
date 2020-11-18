@@ -82,7 +82,11 @@ public class InitialPacketImpl extends BaseLongHeaderPacket implements NumberedP
 
     private VariableLengthInteger tokenLength;
     private byte[] token;
-    // private VariableLengthInteger length; // that is the #getPayloadLength()
+    /**
+     * For received packets, the actual length will be explicitly declared
+     * (and, in case of a protocol error from the peer, may not match the {@link #getPayloadLength()})
+     */
+    private VariableLengthInteger declaredPayloadLength;
     private PacketNumber packetNumber;
     private List<Frame> payload;
 
@@ -112,6 +116,9 @@ public class InitialPacketImpl extends BaseLongHeaderPacket implements NumberedP
             return false;
         }
         if ( payload != null ) {
+            if ( !declaredPayloadLength.equals( getPayloadLength() ) ) {
+                return false;
+            }
             /*
                The payload of an Initial packet includes a CRYPTO frame (or frames)
                containing a cryptographic handshake message, ACK frames, or both.
@@ -131,6 +138,9 @@ public class InitialPacketImpl extends BaseLongHeaderPacket implements NumberedP
                 }
             }
         }
+        else {
+            return declaredPayloadLength.equals( VariableLengthInteger.ZERO );
+        }
         return true;
     }
 
@@ -142,13 +152,18 @@ public class InitialPacketImpl extends BaseLongHeaderPacket implements NumberedP
 
     @Override
     public long getPacketLength() {
-        long sum = super.getPacketLength();
+        long sum = getHeaderLength();
+        sum += declaredPayloadLength.getValue();
+        return sum;
+    }
+
+    @Override
+    public long getHeaderLength() {
+        long sum = super.getHeaderLength();
         sum += tokenLength.getEncodedLengthInBytes();
         sum += tokenLength.getValue();
         sum += getPacketNumberLength();
-        VariableLengthInteger payloadLength = getPayloadLength();
-        sum += payloadLength.getEncodedLengthInBytes();
-        sum += payloadLength.getValue();
+        sum += declaredPayloadLength.getEncodedLengthInBytes();
         return sum;
     }
 }

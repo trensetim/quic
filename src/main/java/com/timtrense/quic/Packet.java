@@ -126,6 +126,15 @@ public interface Packet {
     long getPacketLength();
 
     /**
+     * Attention: this function may return a valid number that is not actually accurate
+     * IF AND ONLY IF <code>{@link #isPacketValid()} == false</code>
+     *
+     * @return the length of this packet header in bytes or -1 if the packet is either invalid or of unknown length
+     * @throws NullPointerException if the packet contains required fields with null value
+     */
+    long getHeaderLength();
+
+    /**
      * Checks the header of this packet but NOT whether all packed frames are valid too.
      *
      * @return true if all necessary data for that packet is present NOT including the payload

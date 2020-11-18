@@ -99,6 +99,13 @@ public class VersionNegotiationPacketImpl implements VersionNegotiationPacket {
 
     @Override
     public long getPacketLength() {
+        long sum = getHeaderLength();
+        sum += 4 /* 4 bytes to encode each supported version */ * supportedVersions.size();
+        return sum;
+    }
+
+    @Override
+    public long getHeaderLength() {
         // this sum will be precomputed by the compiler
         long sum = 1L // flags
                 + 4L // version-length
@@ -107,7 +114,6 @@ public class VersionNegotiationPacketImpl implements VersionNegotiationPacket {
                 ;
         sum += destinationConnectionIdLength;
         sum += sourceConnectionIdLength;
-        sum += 4 /* 4 bytes to encode each supported version */ * supportedVersions.size();
         return sum;
     }
 }

@@ -75,11 +75,15 @@ public class HandshakePacketImpl extends BaseLongHeaderPacket implements Numbere
 
     @Override
     public long getPacketLength() {
-        long sum = super.getPacketLength();
-        sum += getPacketNumberLength();
+        long sum = getHeaderLength();
         VariableLengthInteger payloadLength = getPayloadLength();
         sum += payloadLength.getEncodedLengthInBytes();
         sum += payloadLength.getValue();
         return sum;
+    }
+
+    @Override
+    public long getHeaderLength() {
+        return super.getHeaderLength() + getPacketNumberLength();
     }
 }

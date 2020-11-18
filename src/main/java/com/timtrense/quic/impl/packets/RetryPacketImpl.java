@@ -140,7 +140,12 @@ public class RetryPacketImpl extends BaseLongHeaderPacket {
 
     @Override
     public long getPacketLength() {
-        return super.getPacketLength()
+        return getHeaderLength();
+    }
+
+    @Override
+    public long getHeaderLength() {
+        return super.getHeaderLength()
                 + retryToken.length
                 + 16L // retry integrity tag length
                 ;
