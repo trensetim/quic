@@ -4,10 +4,8 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.Frame;
 import com.timtrense.quic.FrameContainingPacket;
-import com.timtrense.quic.LongHeaderPacket;
 import com.timtrense.quic.NumberedPacket;
 import com.timtrense.quic.PacketNumber;
 import com.timtrense.quic.ProtocolVersion;
