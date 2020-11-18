@@ -26,6 +26,7 @@ public class InitialPacketImplTest {
                 new byte[]{2}, com.timtrense.quic.VariableLengthInteger.ZERO ) );
         validPacket.setTokenLength( VariableLengthInteger.ZERO );
         validPacket.setToken( null );
+        validPacket.setDeclaredPayloadLength( VariableLengthInteger.ZERO );
         return validPacket;
     }
 
