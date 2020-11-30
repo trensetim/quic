@@ -2,6 +2,25 @@ package com.timtrense.quic.tls;
 
 import lombok.Getter;
 
+import com.timtrense.quic.tls.extensions.CertificateAuthoritiesExtension;
+import com.timtrense.quic.tls.extensions.ClientSupportedVersionsExtension;
+import com.timtrense.quic.tls.extensions.CookieExtension;
+import com.timtrense.quic.tls.extensions.EarlyDataIndicationExtension;
+import com.timtrense.quic.tls.extensions.KeyShareClientHelloExtension;
+import com.timtrense.quic.tls.extensions.KeyShareExtensionBase;
+import com.timtrense.quic.tls.extensions.KeyShareHelloRetryRequestExtension;
+import com.timtrense.quic.tls.extensions.KeyShareServerHelloExtension;
+import com.timtrense.quic.tls.extensions.OidFilterExtension;
+import com.timtrense.quic.tls.extensions.PostHandshakeClientAuthExtension;
+import com.timtrense.quic.tls.extensions.PreSharedKeyClientHelloExtension;
+import com.timtrense.quic.tls.extensions.PreSharedKeyExtensionBase;
+import com.timtrense.quic.tls.extensions.PreSharedKeyServerHelloExtension;
+import com.timtrense.quic.tls.extensions.PskKeyExchangeModeExtension;
+import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
+import com.timtrense.quic.tls.extensions.ServerSupportedVersionsExtension;
+import com.timtrense.quic.tls.extensions.SignatureAlgorithmsExtension;
+import com.timtrense.quic.tls.extensions.SupportedGroupsExtension;
+
 /**
  * Extensions are generally structured in a request/response fashion,
  * though some extensions are just indications with no corresponding
@@ -124,12 +143,25 @@ import lombok.Getter;
  */
 public enum ExtensionType {
 
+    /**
+     * @see ServerNameIndicationExtension
+     */
     SERVER_NAME( 0 ),                             /* RFC 6066 */
     MAX_FRAGMENT_LENGTH( 1 ),                     /* RFC 6066 */
     STATUS_REQUEST( 5 ),                          /* RFC 6066 */
 
-    SUPPORTED_GROUPS( 10 ),                       /* RFC 8422, 7919 */
-    SIGNATURE_ALGORITHMS( 13 ),                   /* RFC 8446 */
+    /**
+     * RFC 8422, 7919
+     *
+     * @see SupportedGroupsExtension
+     */
+    SUPPORTED_GROUPS( 10 ),
+    /**
+     * RFC 8446
+     *
+     * @see SignatureAlgorithmsExtension
+     */
+    SIGNATURE_ALGORITHMS( 13 ),
     USE_SRTP( 14 ),                               /* RFC 5764 */
     HEARTBEAT( 15 ),                              /* RFC 6520 */
     APPLICATION_LAYER_PROTOCOL_NEGOTIATION( 16 ), /* RFC 7301 */
@@ -140,16 +172,70 @@ public enum ExtensionType {
 
     PADDING( 21 ),                                /* RFC 7685 */
 
-    PRE_SHARED_KEY( 41 ),                         /* RFC 8446 */
-    EARLY_DATA( 42 ),                             /* RFC 8446 */
-    SUPPORTED_VERSIONS( 43 ),                     /* RFC 8446 */
-    COOKIE( 44 ),                                 /* RFC 8446 */
-    PSK_KEY_EXCHANGE_MODES( 45 ),                 /* RFC 8446 */
-    CERTIFICATE_AUTHORITIES( 47 ),                /* RFC 8446 */
-    OID_FILTERS( 48 ),                            /* RFC 8446 */
-    POST_HANDSHAKE_AUTH( 49 ),                    /* RFC 8446 */
-    SIGNATURE_ALGORITHMS_CERT( 50 ),              /* RFC 8446 */
-    KEY_SHARE( 51 ),                              /* RFC 8446 */
+    /**
+     * RFC 8446
+     *
+     * @see PreSharedKeyExtensionBase
+     * @see PreSharedKeyClientHelloExtension
+     * @see PreSharedKeyServerHelloExtension
+     */
+    PRE_SHARED_KEY( 41 ),
+    /**
+     * RFC 8446
+     *
+     * @see EarlyDataIndicationExtension
+     */
+    EARLY_DATA( 42 ),
+    /**
+     * RFC 8446
+     *
+     * @see ClientSupportedVersionsExtension
+     * @see ServerSupportedVersionsExtension
+     */
+    SUPPORTED_VERSIONS( 43 ),
+    /**
+     * RFC 8446
+     *
+     * @see CookieExtension
+     */
+    COOKIE( 44 ),
+    /**
+     * RFC 8446
+     *
+     * @see PskKeyExchangeModeExtension
+     */
+    PSK_KEY_EXCHANGE_MODES( 45 ),
+    /**
+     * RFC 8446
+     *
+     * @see CertificateAuthoritiesExtension
+     */
+    CERTIFICATE_AUTHORITIES( 47 ),
+    /**
+     * RFC 8446
+     *
+     * @see OidFilterExtension
+     */
+    OID_FILTERS( 48 ),
+    /**
+     * RFC 8446
+     *
+     * @see PostHandshakeClientAuthExtension
+     */
+    POST_HANDSHAKE_AUTH( 49 ),
+    /**
+     * RFC 8446
+     */
+    SIGNATURE_ALGORITHMS_CERT( 50 ),
+    /**
+     * RFC 8446
+     *
+     * @see KeyShareExtensionBase
+     * @see KeyShareClientHelloExtension
+     * @see KeyShareServerHelloExtension
+     * @see KeyShareHelloRetryRequestExtension
+     */
+    KEY_SHARE( 51 ),
 
     // HIGHEST_VALUE( 65535 )
     ;
