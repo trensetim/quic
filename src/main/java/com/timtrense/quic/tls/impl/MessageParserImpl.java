@@ -171,8 +171,8 @@ public class MessageParserImpl implements MessageParser {
     }
 
     private void checkLegacyVersion( ByteBuffer data ) throws MalformedTlsException {
-        byte serverLegacyVersion1 = data.get();
-        byte serverLegacyVersion2 = data.get();
+        int serverLegacyVersion1 = data.get() & 0xff;
+        int serverLegacyVersion2 = data.get() & 0xff;
         if ( serverLegacyVersion1 != 0x03 || serverLegacyVersion2 != 0x03 ) {
             // ProtocolVersion legacy_version = 0x0303;    /* TLS v1.2 */
             throw new MalformedTlsException( "Invalid ServerHello.legacy_version: "
