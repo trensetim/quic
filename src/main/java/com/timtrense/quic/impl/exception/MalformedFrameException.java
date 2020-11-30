@@ -14,9 +14,9 @@ import com.timtrense.quic.Packet;
 public class MalformedFrameException extends QuicParsingException {
 
     @Getter
-    private final Packet containingPacket;
+    private final transient Packet containingPacket;
     @Getter
-    private final @NonNull ByteBuffer payload;
+    private final transient  @NonNull ByteBuffer payload;
     /**
      * the index of the packet within the datagram
      */

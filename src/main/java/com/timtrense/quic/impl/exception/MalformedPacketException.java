@@ -14,9 +14,9 @@ import com.timtrense.quic.impl.ReceivedDatagram;
 public class MalformedPacketException extends QuicParsingException {
 
     @Getter
-    private final ReceivedDatagram datagram;
+    private final transient ReceivedDatagram datagram;
     @Getter
-    private final @NonNull ByteBuffer payload;
+    private final transient @NonNull ByteBuffer payload;
     /**
      * the index of the packet within the datagram
      */
