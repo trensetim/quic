@@ -3,7 +3,7 @@ package com.timtrense.quic.tls;
 import lombok.Getter;
 
 /**
- * TLS Protocol Version
+ * TLS Protocol Version. Values will be encoded as uint16.
  *
  * @author Tim Trense
  */
