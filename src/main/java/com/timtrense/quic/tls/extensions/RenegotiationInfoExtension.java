@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 
 import com.timtrense.quic.tls.Extension;
 import com.timtrense.quic.tls.ExtensionType;
-import com.timtrense.quic.tls.ServerName;
 
 /**
  * This document defines a new TLS extension, "renegotiation_info" (with
@@ -46,7 +45,7 @@ import com.timtrense.quic.tls.ServerName;
  *
  * @author Tim Trense
  * @see <a href="https://tools.ietf.org/html/rfc5746#section-3.2">
- *     TLS 1.3 Extension Renegotiation Info Spec/Section 3.2</a>
+ * TLS 1.3 Extension Renegotiation Info Spec/Section 3.2</a>
  */
 @Data
 @EqualsAndHashCode( callSuper = true )

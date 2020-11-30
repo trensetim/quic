@@ -17,13 +17,11 @@ import com.timtrense.quic.impl.base.PacketNumberImpl;
 import com.timtrense.quic.impl.exception.QuicParsingException;
 import com.timtrense.quic.impl.frames.CryptoFrameImpl;
 import com.timtrense.quic.impl.frames.MultiPaddingFrameImpl;
-import com.timtrense.quic.impl.frames.PaddingFrameImpl;
 import com.timtrense.quic.impl.packets.InitialPacketImpl;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 

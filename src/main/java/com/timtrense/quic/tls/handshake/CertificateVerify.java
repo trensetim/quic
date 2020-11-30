@@ -3,8 +3,6 @@ package com.timtrense.quic.tls.handshake;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import com.timtrense.quic.tls.ExtendedHandshake;
-import com.timtrense.quic.tls.Handshake;
 import com.timtrense.quic.tls.HandshakeType;
 import com.timtrense.quic.tls.SignatureScheme;
 

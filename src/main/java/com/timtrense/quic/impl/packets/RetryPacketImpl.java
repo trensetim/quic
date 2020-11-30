@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
-import com.timtrense.quic.ConnectionId;
-import com.timtrense.quic.LongHeaderPacket;
 import com.timtrense.quic.ProtocolVersion;
 
 /**

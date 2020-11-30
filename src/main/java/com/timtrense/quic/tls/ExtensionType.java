@@ -245,7 +245,6 @@ public enum ExtensionType {
 
     /**
      * RFC 5746
-     *
      */
     RENEGOTIATION_INFO( 65281 /*0xff01*/ ),
 

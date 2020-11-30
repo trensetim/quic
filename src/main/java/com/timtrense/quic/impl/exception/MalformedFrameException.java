@@ -16,7 +16,7 @@ public class MalformedFrameException extends QuicParsingException {
     @Getter
     private final transient Packet containingPacket;
     @Getter
-    private final transient  @NonNull ByteBuffer payload;
+    private final transient @NonNull ByteBuffer payload;
     /**
      * the index of the packet within the datagram
      */

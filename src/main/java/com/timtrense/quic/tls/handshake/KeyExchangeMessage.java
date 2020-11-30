@@ -1,7 +1,6 @@
 package com.timtrense.quic.tls.handshake;
 
 import com.timtrense.quic.tls.ExtendedHandshake;
-import com.timtrense.quic.tls.Handshake;
 
 /**
  * Common base class for messages from

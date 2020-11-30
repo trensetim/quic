@@ -7,10 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.Frame;
 import com.timtrense.quic.FrameContainingPacket;
-import com.timtrense.quic.LongHeaderPacket;
 import com.timtrense.quic.NumberedPacket;
 import com.timtrense.quic.PacketNumber;
 import com.timtrense.quic.ProtocolVersion;
