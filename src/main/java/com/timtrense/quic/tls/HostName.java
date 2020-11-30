@@ -25,19 +25,19 @@ import lombok.NonNull;
 @EqualsAndHashCode( callSuper = true )
 public class HostName extends ServerName {
 
-    private @NonNull byte[] hostname;
+    private @NonNull byte[] value;
 
     /**
      * Converts the given host name to a byte-array via {@link StandardCharsets#US_ASCII}
      *
-     * @param hostname the hostname to apply. must be ASCII-encodable, must not be null
+     * @param value the hostname to apply. must be ASCII-encodable, must not be null
      */
-    public HostName( @NonNull String hostname ) {
-        this( hostname.getBytes( StandardCharsets.US_ASCII ) );
+    public HostName( @NonNull String value ) {
+        this( value.getBytes( StandardCharsets.US_ASCII ) );
     }
 
-    public HostName( @NonNull byte[] hostname ) {
-        this.hostname = hostname;
+    public HostName( @NonNull byte[] value ) {
+        this.value = value;
     }
 
     /**
@@ -46,11 +46,11 @@ public class HostName extends ServerName {
      * @param hostname the hostname to apply. must be ASCII-encodable, must not be null
      */
     public void setHostnameByString( @NonNull String hostname ) {
-        this.hostname = hostname.getBytes( StandardCharsets.US_ASCII );
+        this.value = hostname.getBytes( StandardCharsets.US_ASCII );
     }
 
     @Override
     public String toString() {
-        return new String( hostname, StandardCharsets.US_ASCII );
+        return new String( value, StandardCharsets.US_ASCII );
     }
 }

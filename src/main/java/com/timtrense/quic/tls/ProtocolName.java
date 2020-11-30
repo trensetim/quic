@@ -13,19 +13,19 @@ import lombok.NonNull;
 @Data
 public class ProtocolName {
 
-    private byte[] protocolName;
+    private byte[] value;
 
     /**
      * Converts the given host name to a byte-array via {@link StandardCharsets#US_ASCII}
      *
-     * @param protocolName the protocolName to apply. must be ASCII-encodable, must not be null
+     * @param value the protocolName to apply. must be ASCII-encodable, must not be null
      */
-    public ProtocolName( @NonNull String protocolName ) {
-        this( protocolName.getBytes( StandardCharsets.US_ASCII ) );
+    public ProtocolName( @NonNull String value ) {
+        this( value.getBytes( StandardCharsets.US_ASCII ) );
     }
 
-    public ProtocolName( @NonNull byte[] protocolName ) {
-        this.protocolName = protocolName;
+    public ProtocolName( @NonNull byte[] value ) {
+        this.value = value;
     }
 
     /**
@@ -34,11 +34,11 @@ public class ProtocolName {
      * @param protocolName the protocolName to apply. must be ASCII-encodable, must not be null
      */
     public void setHostnameByString( @NonNull String protocolName ) {
-        this.protocolName = protocolName.getBytes( StandardCharsets.US_ASCII );
+        this.value = protocolName.getBytes( StandardCharsets.US_ASCII );
     }
 
     @Override
     public String toString() {
-        return new String( protocolName, StandardCharsets.US_ASCII );
+        return new String( value, StandardCharsets.US_ASCII );
     }
 }
