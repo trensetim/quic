@@ -32,8 +32,6 @@ jacocoTestReport {
     }
 }
 
-tasks['sonarqube'].dependsOn test
-
 task copyDependencies(type: Copy) {
     from configurations.compile
     into 'build/dependencies'
