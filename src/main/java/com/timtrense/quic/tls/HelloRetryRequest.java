@@ -3,6 +3,8 @@ package com.timtrense.quic.tls;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import com.timtrense.quic.tls.handshake.ServerHello;
+
 /**
  * The server will send this message in response to a ClientHello
  * message if it is able to find an acceptable set of parameters but the

@@ -2,6 +2,9 @@ package com.timtrense.quic.tls;
 
 import lombok.Getter;
 
+import com.timtrense.quic.tls.handshake.ClientHello;
+import com.timtrense.quic.tls.handshake.ServerHello;
+
 /**
  * The handshake protocol is used to negotiate the security parameters
  * of a connection.  Handshake messages are supplied to the TLS record

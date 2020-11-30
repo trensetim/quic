@@ -1,8 +1,12 @@
-package com.timtrense.quic.tls;
+package com.timtrense.quic.tls.handshake;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+
+import com.timtrense.quic.tls.CipherSuite;
+import com.timtrense.quic.tls.ExtendedHandshake;
+import com.timtrense.quic.tls.HandshakeType;
 
 /**
  * When a client first connects to a server, it is REQUIRED to send the
