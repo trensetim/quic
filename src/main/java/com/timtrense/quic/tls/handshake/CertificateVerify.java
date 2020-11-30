@@ -126,7 +126,7 @@ import com.timtrense.quic.tls.SignatureScheme;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
-public class CertificateVerify extends Handshake {
+public class CertificateVerify extends AuthenticationMessage {
 
     private SignatureScheme algorithm;
     /**
