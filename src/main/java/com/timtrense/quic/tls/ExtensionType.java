@@ -237,6 +237,9 @@ public enum ExtensionType {
      */
     KEY_SHARE( 51 ),
 
+    // QUIC Specifics:
+    QUIC_TRANSPORT_PARAMETERS( 65445 /* 0xffa5 */ )
+
     // HIGHEST_VALUE( 65535 )
     ;
 
