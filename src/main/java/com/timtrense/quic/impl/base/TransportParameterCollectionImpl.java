@@ -2,7 +2,6 @@ package com.timtrense.quic.impl.base;
 
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.timtrense.quic.TransportParameter;
@@ -88,7 +87,8 @@ public class TransportParameterCollectionImpl implements TransportParameterColle
         );
     }
 
-    private final Map<TransportParameterType, TransportParameter<?>> parameterMap = new HashMap<>();
+    private final Map<TransportParameterType, TransportParameter<?>> parameterMap =
+            new EnumMap<>( TransportParameterType.class );
 
     @Override
     public TransportParameter<?> getParameter( TransportParameterType type ) {
