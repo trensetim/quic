@@ -3,6 +3,8 @@ package com.timtrense.quic.tls;
 import lombok.Data;
 
 /**
+ * A <b>message</b> within the TLS-1.3-Protocol
+ *
  * <pre>
  * struct {
  *     HandshakeType msg_type;
