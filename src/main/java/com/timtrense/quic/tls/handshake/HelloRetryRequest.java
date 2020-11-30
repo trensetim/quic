@@ -3,8 +3,6 @@ package com.timtrense.quic.tls.handshake;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import com.timtrense.quic.tls.handshake.ServerHello;
-
 /**
  * The server will send this message in response to a ClientHello
  * message if it is able to find an acceptable set of parameters but the
@@ -75,6 +73,23 @@ import com.timtrense.quic.tls.handshake.ServerHello;
 @Data
 @EqualsAndHashCode( callSuper = true )
 public class HelloRetryRequest extends ServerHello {
+
+    /**
+     * For reasons of backward compatibility with middleboxes (see
+     * Appendix D.4), the HelloRetryRequest message uses the same structure
+     * as the ServerHello, but with Random set to the special value of the
+     * SHA-256 of "HelloRetryRequest":
+     * <pre>
+     *     CF 21 AD 74 E5 9A 61 11 BE 1D 8C 02 1E 65 B8 91
+     *     C2 A2 11 16 7A BB 8C 5E 07 9E 09 E2 C8 A8 33 9C
+     * </pre>
+     */
+    public static final byte[] SPECIFIC_RANDOM = new byte[]{
+            (byte)0xCF, (byte)0x21, (byte)0xAD, (byte)0x74, (byte)0xE5, (byte)0x9A, (byte)0x61, (byte)0x11,
+            (byte)0xBE, (byte)0x1D, (byte)0x8C, (byte)0x02, (byte)0x1E, (byte)0x65, (byte)0xB8, (byte)0x91,
+            (byte)0xC2, (byte)0xA2, (byte)0x11, (byte)0x16, (byte)0x7A, (byte)0xBB, (byte)0x8C, (byte)0x5E,
+            (byte)0x07, (byte)0x9E, (byte)0x09, (byte)0xE2, (byte)0xC8, (byte)0xA8, (byte)0x33, (byte)0x9C
+    };
 
     // {@link #getMessageType} will return {@link HandshakeType#SERVER_HELLO} as super does
 
