@@ -2,7 +2,9 @@ package com.timtrense.quic.tls;
 
 import lombok.Getter;
 
+import com.timtrense.quic.tls.handshake.CertificateRequest;
 import com.timtrense.quic.tls.handshake.ClientHello;
+import com.timtrense.quic.tls.handshake.EncryptedExtensions;
 import com.timtrense.quic.tls.handshake.ServerHello;
 
 /**
@@ -30,8 +32,14 @@ public enum HandshakeType {
     SERVER_HELLO( 2 ),
     NEW_SESSION_TICKET( 4 ),
     END_OF_EARLY_DATA( 5 ),
+    /**
+     * @see EncryptedExtensions
+     */
     ENCRYPTED_EXTENSIONS( 8 ),
     CERTIFICATE( 11 ),
+    /**
+     * @see CertificateRequest
+     */
     CERTIFICATE_REQUEST( 13 ),
     CERTIFICATE_VERIFY( 15 ),
     FINISHED( 20 ),
