@@ -12,9 +12,9 @@ public abstract class ServerName {
 
     /**
      * <b>Implementation Note: the field is initialized to {@link NameType#HOST_NAME} which is implemented in
-     * {@link HostName}</b>
+     * {@link HostName}</b>, because it is the only known {@link NameType} currently
      */
-    private final @NonNull NameType nameType = NameType.HOST_NAME;
+    private @NonNull NameType nameType = NameType.HOST_NAME;
 
     // subclasses should add their specific actual name implementation
 }
