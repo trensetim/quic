@@ -5,6 +5,7 @@ import lombok.Getter;
 import com.timtrense.quic.tls.handshake.CertificateRequest;
 import com.timtrense.quic.tls.handshake.ClientHello;
 import com.timtrense.quic.tls.handshake.EncryptedExtensions;
+import com.timtrense.quic.tls.handshake.HelloRetryRequest;
 import com.timtrense.quic.tls.handshake.ServerHello;
 
 /**

@@ -1,4 +1,4 @@
-package com.timtrense.quic.tls;
+package com.timtrense.quic.tls.handshake;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
