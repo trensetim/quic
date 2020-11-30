@@ -37,6 +37,6 @@ task copyDependencies(type: Copy) {
     into 'build/dependencies'
 }
 
-build {
+assemble {
     dependsOn copyDependencies
 }
