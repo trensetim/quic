@@ -198,6 +198,22 @@ public class VariableLengthIntegerEncoder {
     }
 
     /**
+     * decodes a classic java integer (or long) from the given bytes.
+     *
+     * @param data the binary representation, positioned at the start of the encoded fixed length integer
+     * @param len  the length to parse (for an int not more than 4 (or 8 for long), otherwise arithmetic interesting things will happen)
+     * @return the decoded integer value as a long
+     */
+    public static long decodeFixedLengthInteger( ByteBuffer data, int len ) {
+        long value = 0;
+        for ( int i = 0; i < len; i++ ) {
+            int currentByte = data.get() & 0xff;
+            value = ( value << 8 ) | ( currentByte & 0xff );
+        }
+        return value;
+    }
+
+    /**
      * encodes a classic java integer (or long) into the given bytes.
      *
      * @param value the actual value to encode

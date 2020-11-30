@@ -106,6 +106,8 @@ public class ClientHello extends KeyExchangeMessage {
      * usual.  If the client is attempting a PSK key establishment, it
      * SHOULD advertise at least one cipher suite indicating a Hash
      * associated with the PSK.
+     * <p/>
+     * <b>Length: 2..2^16-2 instances</b>
      */
     private CipherSuite[] cipherSuites;
 
@@ -121,6 +123,8 @@ public class ClientHello extends KeyExchangeMessage {
      * receive TLS 1.2 or prior ClientHellos which contain other
      * compression methods and (if negotiating such a prior version) MUST
      * follow the procedures for the appropriate prior version of TLS.
+     * <p/>
+     * <b>Length: 1..2^8-1 bytes</b>
      */
     private byte[] legacyCompressionMethods;
 

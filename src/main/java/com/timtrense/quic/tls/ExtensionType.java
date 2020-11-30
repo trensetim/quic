@@ -243,6 +243,12 @@ public enum ExtensionType {
      */
     KEY_SHARE( 51 ),
 
+    /**
+     * RFC 5746
+     *
+     */
+    RENEGOTIATION_INFO( 65281 /*0xff01*/ ),
+
     // QUIC Specifics:
     QUIC_TRANSPORT_PARAMETERS( 65445 /* 0xffa5 */ )
 
