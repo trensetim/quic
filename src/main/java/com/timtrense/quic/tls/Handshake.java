@@ -35,6 +35,8 @@ public abstract class Handshake {
 
     /**
      * Remaining bytes in message as a 3-byte unsigned integer
+     * <p/>
+     * <b>Implementation Note: the field will be set to zero upon instantiation</b>
      */
     private int length;
 }

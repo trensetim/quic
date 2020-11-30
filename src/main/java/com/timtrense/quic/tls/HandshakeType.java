@@ -2,8 +2,6 @@ package com.timtrense.quic.tls;
 
 import lombok.Getter;
 
-import com.timtrense.quic.FrameType;
-
 /**
  * The handshake protocol is used to negotiate the security parameters
  * of a connection.  Handshake messages are supplied to the TLS record
@@ -16,7 +14,16 @@ import com.timtrense.quic.FrameType;
  */
 public enum HandshakeType {
 
+    /**
+     * @see ClientHello
+     */
     CLIENT_HELLO( 1 ),
+    /**
+     * The value will be used for {@link HelloRetryRequest} too, as it
+     * is defined as being structurally equivalent to {@link ServerHello}
+     *
+     * @see ServerHello
+     */
     SERVER_HELLO( 2 ),
     NEW_SESSION_TICKET( 4 ),
     END_OF_EARLY_DATA( 5 ),
