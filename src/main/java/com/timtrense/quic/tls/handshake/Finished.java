@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import com.timtrense.quic.tls.ExtendedHandshake;
+import com.timtrense.quic.tls.Handshake;
 import com.timtrense.quic.tls.HandshakeType;
 
 /**
@@ -81,7 +82,7 @@ import com.timtrense.quic.tls.HandshakeType;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
-public class Finished extends ExtendedHandshake {
+public class Finished extends Handshake {
 
     /**
      * <b>Implementation Note: the field will be initialized to an empty array upon instantiation</b>

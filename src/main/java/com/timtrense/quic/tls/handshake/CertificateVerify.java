@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import com.timtrense.quic.tls.ExtendedHandshake;
+import com.timtrense.quic.tls.Handshake;
 import com.timtrense.quic.tls.HandshakeType;
 import com.timtrense.quic.tls.SignatureScheme;
 
@@ -125,7 +126,7 @@ import com.timtrense.quic.tls.SignatureScheme;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
-public class CertificateVerify extends ExtendedHandshake {
+public class CertificateVerify extends Handshake {
 
     private SignatureScheme algorithm;
     /**
