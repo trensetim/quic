@@ -37,7 +37,7 @@ import com.timtrense.quic.tls.Handshake;
  * Based on these inputs, the messages then contain:
  * <ul>
  *     <li>
- *         Certificate:  The certificate to be used for authentication, and any
+ *         {@link Certificate}:  The certificate to be used for authentication, and any
  *       supporting certificates in the chain.  Note that certificate-based
  *       client authentication is not available in PSK handshake flows
  *       (including 0-RTT).
