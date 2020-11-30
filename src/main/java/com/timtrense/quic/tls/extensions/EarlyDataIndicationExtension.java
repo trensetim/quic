@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 
 import com.timtrense.quic.tls.Extension;
 import com.timtrense.quic.tls.ExtensionType;
+import com.timtrense.quic.tls.handshake.NewSessionTicket;
 
 /**
  * When a PSK is used and early data is allowed for that PSK, the client
@@ -153,11 +154,24 @@ public class EarlyDataIndicationExtension extends Extension {
 
     /**
      * uint32
+     * <p/>
+     * <b>If applied in {@link NewSessionTicket}</b>
+     * The maximum amount of 0-RTT data that the
+     * client is allowed to send when using this ticket, in bytes.  Only
+     * Application Data payload (i.e., plaintext but not padding or the
+     * inner content type byte) is counted.  A server receiving more than
+     * max_early_data_size bytes of 0-RTT data SHOULD terminate the
+     * connection with an "unexpected_message" alert.  Note that servers
+     * that reject early data due to lack of cryptographic material will
+     * be unable to differentiate padding from content, so clients
+     * SHOULD NOT depend on being able to send large quantities of
+     * padding in early data records.
+     * <p/>
      */
     private long maxEarlyDataSize;
 
     @Override
     public ExtensionType getExtensionType() {
-        return null /*TODO: what extension type to use here? */;
+        return ExtensionType.EARLY_DATA;
     }
 }
