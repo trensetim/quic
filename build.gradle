@@ -23,6 +23,7 @@ dependencies {
 test {
     exclude 'com/timtrense/quic/Adhoc.class'
     finalizedBy jacocoTestReport
+    ignoreFailures = Boolean.getBoolean("test.ignoreFailures")
 }
 
 jacocoTestReport {
