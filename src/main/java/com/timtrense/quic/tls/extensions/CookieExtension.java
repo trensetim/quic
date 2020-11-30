@@ -44,6 +44,9 @@ import com.timtrense.quic.tls.ExtensionType;
  * ClientHello (see Section 5).  Since the server is not storing any
  * state, this will appear as if it were the first message to be
  * received.  Servers operating statelessly MUST ignore these records.
+ *
+ * @author Tim Trense
+ * @see <a href="https://tools.ietf.org/html/rfc8446#section-4.2.2">TLS 1.3 Spec/Section 4.2.2</a>
  */
 @Data
 @EqualsAndHashCode( callSuper = true )

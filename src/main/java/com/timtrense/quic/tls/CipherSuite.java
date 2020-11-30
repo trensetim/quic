@@ -23,8 +23,8 @@ import lombok.Getter;
  * +-----------+------------------------------------------------+
  * </pre>
  *
- * @see <a href="https://tools.ietf.org/html/rfc8446#appendix-B.4">TLS 1.3 Spec/Appendix B.4</a>
  * @author Tim Trense
+ * @see <a href="https://tools.ietf.org/html/rfc8446#appendix-B.4">TLS 1.3 Spec/Appendix B.4</a>
  */
 public enum CipherSuite {
 
