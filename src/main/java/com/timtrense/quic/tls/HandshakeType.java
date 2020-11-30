@@ -2,10 +2,16 @@ package com.timtrense.quic.tls;
 
 import lombok.Getter;
 
+import com.timtrense.quic.tls.handshake.Certificate;
 import com.timtrense.quic.tls.handshake.CertificateRequest;
+import com.timtrense.quic.tls.handshake.CertificateVerify;
 import com.timtrense.quic.tls.handshake.ClientHello;
 import com.timtrense.quic.tls.handshake.EncryptedExtensions;
+import com.timtrense.quic.tls.handshake.EndOfEarlyData;
+import com.timtrense.quic.tls.handshake.Finished;
 import com.timtrense.quic.tls.handshake.HelloRetryRequest;
+import com.timtrense.quic.tls.handshake.KeyUpdate;
+import com.timtrense.quic.tls.handshake.NewSessionTicket;
 import com.timtrense.quic.tls.handshake.ServerHello;
 
 /**
@@ -31,19 +37,37 @@ public enum HandshakeType {
      * @see ServerHello
      */
     SERVER_HELLO( 2 ),
+    /**
+     * @see NewSessionTicket
+     */
     NEW_SESSION_TICKET( 4 ),
+    /**
+     * @see EndOfEarlyData
+     */
     END_OF_EARLY_DATA( 5 ),
     /**
      * @see EncryptedExtensions
      */
     ENCRYPTED_EXTENSIONS( 8 ),
+    /**
+     * @see Certificate
+     */
     CERTIFICATE( 11 ),
     /**
      * @see CertificateRequest
      */
     CERTIFICATE_REQUEST( 13 ),
+    /**
+     * @see CertificateVerify
+     */
     CERTIFICATE_VERIFY( 15 ),
+    /**
+     * @see Finished
+     */
     FINISHED( 20 ),
+    /**
+     * @see KeyUpdate
+     */
     KEY_UPDATE( 24 ),
     MESSAGE_HASH( 254 ),
 
