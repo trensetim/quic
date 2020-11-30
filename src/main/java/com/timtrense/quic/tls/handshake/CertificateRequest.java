@@ -3,7 +3,6 @@ package com.timtrense.quic.tls.handshake;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import com.timtrense.quic.tls.ExtendedHandshake;
 import com.timtrense.quic.tls.HandshakeType;
 
 /**
@@ -43,7 +42,7 @@ import com.timtrense.quic.tls.HandshakeType;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
-public class CertificateRequest extends ExtendedHandshake {
+public class CertificateRequest extends ServerParametersMessage {
 
     /**
      * An opaque string which identifies the

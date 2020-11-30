@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 import com.timtrense.quic.tls.CipherSuite;
-import com.timtrense.quic.tls.ExtendedHandshake;
 import com.timtrense.quic.tls.HandshakeType;
 
 /**
@@ -58,7 +57,7 @@ import com.timtrense.quic.tls.HandshakeType;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
-public class ClientHello extends ExtendedHandshake {
+public class ClientHello extends KeyExchangeMessage {
 
     /*
     legacy_version:  In previous versions of TLS, this field was used for

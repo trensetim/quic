@@ -1,6 +1,5 @@
 package com.timtrense.quic.tls.handshake;
 
-import com.timtrense.quic.tls.ExtendedHandshake;
 import com.timtrense.quic.tls.HandshakeType;
 
 /**
@@ -24,7 +23,7 @@ import com.timtrense.quic.tls.HandshakeType;
  * @author Tim Trense
  * @see <a href="https://tools.ietf.org/html/rfc8446#section-4.3.1">TLS 1.3 Spec/Section 4.3.1</a>
  */
-public class EncryptedExtensions extends ExtendedHandshake {
+public class EncryptedExtensions extends ServerParametersMessage {
     @Override
     public HandshakeType getMessageType() {
         return HandshakeType.ENCRYPTED_EXTENSIONS;
