@@ -2,6 +2,7 @@ package com.timtrense.quic.tls;
 
 import lombok.Getter;
 
+import com.timtrense.quic.tls.extensions.ApplicationLayerProtocolNegotiationExtension;
 import com.timtrense.quic.tls.extensions.CertificateAuthoritiesExtension;
 import com.timtrense.quic.tls.extensions.ClientSupportedVersionsExtension;
 import com.timtrense.quic.tls.extensions.CookieExtension;
@@ -164,7 +165,12 @@ public enum ExtensionType {
     SIGNATURE_ALGORITHMS( 13 ),
     USE_SRTP( 14 ),                               /* RFC 5764 */
     HEARTBEAT( 15 ),                              /* RFC 6520 */
-    APPLICATION_LAYER_PROTOCOL_NEGOTIATION( 16 ), /* RFC 7301 */
+    /**
+     * RFC 7301
+     *
+     * @see ApplicationLayerProtocolNegotiationExtension
+     */
+    APPLICATION_LAYER_PROTOCOL_NEGOTIATION( 16 ),
     SIGNED_CERTIFICATE_TIMESTAMP( 18 ),           /* RFC 6962 */
 
     CLIENT_CERTIFICATE_TYPE( 19 ),                /* RFC 7250 */
