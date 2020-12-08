@@ -159,7 +159,7 @@ public class MessageParserImpl implements MessageParser {
         List<Extension> extensionList = handshake.getExtensions();
         while ( extensionDataLength > 0 ) {
             int positionBefore = data.position();
-            Extension extension = extensionParser.parseExtension( data, extensionDataLength );
+            Extension extension = extensionParser.parseExtension( handshake, data, extensionDataLength );
             if ( extension == null ) {
                 throw new MalformedTlsException( "Parsed null Extension" );
             }

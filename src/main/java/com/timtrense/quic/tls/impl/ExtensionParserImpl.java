@@ -10,8 +10,10 @@ import com.timtrense.quic.impl.exception.MalformedTlsException;
 import com.timtrense.quic.impl.exception.QuicParsingException;
 import com.timtrense.quic.tls.CertificateStatusType;
 import com.timtrense.quic.tls.Extension;
+import com.timtrense.quic.tls.ExtensionCarryingHandshake;
 import com.timtrense.quic.tls.ExtensionType;
 import com.timtrense.quic.tls.HostName;
+import com.timtrense.quic.tls.KeyShareEntry;
 import com.timtrense.quic.tls.NameType;
 import com.timtrense.quic.tls.NamedGroup;
 import com.timtrense.quic.tls.OcspExtensions;
@@ -19,11 +21,18 @@ import com.timtrense.quic.tls.OcspResponderId;
 import com.timtrense.quic.tls.ProtocolName;
 import com.timtrense.quic.tls.ServerName;
 import com.timtrense.quic.tls.extensions.ApplicationLayerProtocolNegotiationExtension;
+import com.timtrense.quic.tls.extensions.KeyShareClientHelloExtension;
+import com.timtrense.quic.tls.extensions.KeyShareExtensionBase;
+import com.timtrense.quic.tls.extensions.KeyShareHelloRetryRequestExtension;
+import com.timtrense.quic.tls.extensions.KeyShareServerHelloExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
 import com.timtrense.quic.tls.extensions.StatusRequestExtensionBase;
 import com.timtrense.quic.tls.extensions.StatusRequestOcspExtension;
 import com.timtrense.quic.tls.extensions.SupportedGroupsExtension;
+import com.timtrense.quic.tls.handshake.ClientHello;
+import com.timtrense.quic.tls.handshake.HelloRetryRequest;
+import com.timtrense.quic.tls.handshake.ServerHello;
 
 /**
  * Default implementation for {@link MessageParser}
@@ -34,6 +43,7 @@ public class ExtensionParserImpl implements ExtensionParser {
 
     @Override
     public Extension parseExtension(
+            @NonNull ExtensionCarryingHandshake handshake,
             @NonNull ByteBuffer data,
             int maxLength )
             throws QuicParsingException {
@@ -59,6 +69,8 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parseApplicationLayerProtocolNegotiation( data, extensionDataLength );
             case STATUS_REQUEST:
                 return parseStatusRequest( data, extensionDataLength );
+            case KEY_SHARE:
+                return parseKeyShare( handshake, data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
@@ -102,11 +114,8 @@ public class ExtensionParserImpl implements ExtensionParser {
         NamedGroup[] namedGroupList = new NamedGroup[namedGroupListLength];
 
         for ( int i = 0; i < namedGroupListLength; i++ ) {
-            int value = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
-            NamedGroup group = NamedGroup.findByValue( value );
-            if ( group == null ) {
-                throw new MalformedTlsException( "Invalid NamedGroup.value: " + value );
-            }
+            NamedGroup group = parseNamedGroup( data );
+            namedGroupList[i] = group;
         }
 
         SupportedGroupsExtension extension = new SupportedGroupsExtension();
@@ -181,5 +190,62 @@ public class ExtensionParserImpl implements ExtensionParser {
         extension.setResponderIdList( responderIds );
         extension.setRequestExtensions( requestExtensions );
         return extension;
+    }
+
+    private KeyShareExtensionBase parseKeyShare(
+            ExtensionCarryingHandshake handshake, ByteBuffer data, int maxLength ) throws MalformedTlsException {
+        KeyShareExtensionBase extension;
+        if ( handshake instanceof ClientHello ) {
+            int clientSharesLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+            // randomly approximate length of list
+            List<KeyShareEntry> clientSharesList = new ArrayList<>( clientSharesLength / 10 + 1 );
+            while ( clientSharesLength > 0 ) {
+                KeyShareEntry entry = parseKeyShareEntry( data, clientSharesLength );
+                clientSharesList.add( entry );
+                clientSharesLength -= entry.getKeyExchange().length + 2 + 2 /* named group + keyExchange.length*/;
+            }
+            KeyShareEntry[] clientShares = new KeyShareEntry[clientSharesList.size()];
+            clientSharesList.toArray( clientShares );
+
+            extension = new KeyShareClientHelloExtension();
+            ( (KeyShareClientHelloExtension)extension ).setClientShares( clientShares );
+        }
+        else if ( handshake instanceof HelloRetryRequest ) {
+            NamedGroup selectedGroup = parseNamedGroup( data );
+            extension = new KeyShareHelloRetryRequestExtension();
+            ( (KeyShareHelloRetryRequestExtension)extension ).setSelectedGroup( selectedGroup );
+        }
+        else if ( handshake instanceof ServerHello ) {
+            KeyShareEntry serverShare = parseKeyShareEntry( data, maxLength );
+            extension = new KeyShareServerHelloExtension();
+            ( (KeyShareServerHelloExtension)extension ).setServerShare( serverShare );
+        }
+        else {
+            throw new MalformedTlsException( "illegal KEY_SHARE extension in message of type "
+                    + handshake.getClass().getSimpleName() );
+        }
+
+        return extension;
+    }
+
+    private KeyShareEntry parseKeyShareEntry( ByteBuffer data, int maxLength ) throws MalformedTlsException {
+        NamedGroup namedGroup = parseNamedGroup( data );
+        int keyExchangeLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        byte[] keyExchange = new byte[keyExchangeLength];
+        data.get( keyExchange );
+
+        KeyShareEntry entry = new KeyShareEntry();
+        entry.setGroup( namedGroup );
+        entry.setKeyExchange( keyExchange );
+        return entry;
+    }
+
+    private NamedGroup parseNamedGroup( ByteBuffer data ) throws MalformedTlsException {
+        int namedGroupRaw = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        NamedGroup namedGroup = NamedGroup.findByValue( namedGroupRaw );
+        if ( namedGroup == null ) {
+            throw new MalformedTlsException( "Invalid NamedGroup.value: " + namedGroupRaw );
+        }
+        return namedGroup;
     }
 }
