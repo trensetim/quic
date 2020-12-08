@@ -13,7 +13,9 @@ import com.timtrense.quic.tls.ExtensionType;
 import com.timtrense.quic.tls.HostName;
 import com.timtrense.quic.tls.NameType;
 import com.timtrense.quic.tls.NamedGroup;
+import com.timtrense.quic.tls.ProtocolName;
 import com.timtrense.quic.tls.ServerName;
+import com.timtrense.quic.tls.extensions.ApplicationLayerProtocolNegotiationExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
 import com.timtrense.quic.tls.extensions.SupportedGroupsExtension;
@@ -48,13 +50,16 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parseSupportedGroups( data, extensionDataLength );
             case RENEGOTIATION_INFO:
                 return parseRenegotiationInfo( data, extensionDataLength );
+            case APPLICATION_LAYER_PROTOCOL_NEGOTIATION:
+                return parseApplicationLayerProtocolNegotiation( data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
         }
     }
 
-    private ServerNameIndicationExtension parseServerName( ByteBuffer data, int maxLength ) throws MalformedTlsException {
+    private ServerNameIndicationExtension parseServerName( ByteBuffer data, int maxLength )
+            throws MalformedTlsException {
         // https://tools.ietf.org/html/rfc6066#section-3
 
         int serverNameListLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
@@ -82,7 +87,8 @@ public class ExtensionParserImpl implements ExtensionParser {
         return extension;
     }
 
-    private SupportedGroupsExtension parseSupportedGroups( ByteBuffer data, int extensionDataLength ) throws MalformedTlsException {
+    private SupportedGroupsExtension parseSupportedGroups( ByteBuffer data, int extensionDataLength )
+            throws MalformedTlsException {
         int namedGroupListLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
         // all named group values are 2 bytes wide, so length of the list is half the length in bytes
         namedGroupListLength /= 2;
@@ -111,6 +117,27 @@ public class ExtensionParserImpl implements ExtensionParser {
         RenegotiationInfoExtension extension = new RenegotiationInfoExtension();
         extension.setRenegotiatedConnection( renegotiationInfoRaw );
 
+        return extension;
+    }
+
+    private ApplicationLayerProtocolNegotiationExtension parseApplicationLayerProtocolNegotiation(
+            ByteBuffer data, int maxLength ) {
+        int protocolNamesListLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        // randomly approximating list length
+        List<ProtocolName> protocolNamesList = new ArrayList<>( protocolNamesListLength / 10 + 1 );
+        while ( protocolNamesListLength > 0 ) {
+            int protocolNameLength = data.get() & 0xff;
+            byte[] protocolNameRaw = new byte[protocolNameLength];
+            data.get( protocolNameRaw );
+            ProtocolName protocolName = new ProtocolName( protocolNameRaw );
+            protocolNamesList.add( protocolName );
+            protocolNamesListLength -= protocolNameLength + 1 /* protocolNameLength */;
+        }
+
+        ProtocolName[] protocolNames = new ProtocolName[protocolNamesList.size()];
+        protocolNamesList.toArray( protocolNames );
+        ApplicationLayerProtocolNegotiationExtension extension = new ApplicationLayerProtocolNegotiationExtension();
+        extension.setProtocolNameList( protocolNames );
         return extension;
     }
 }
