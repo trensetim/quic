@@ -30,7 +30,9 @@ and related TLS implementation (I would really like him to open source it).
 I decided to do my own implementation of QUIC because I felt too much of a pain in trying to understand kwiks source
  code and doubting that that code base can be long-term maintained.
  
-This implementation uses [HKDF by Patrick Favre-Bulle](https://github.com/patrickfav/hkdf Github/patrickfav/hdkf)
+This implementation uses [HKDF by Patrick Favre-Bulle](https://github.com/patrickfav/hkdf)
  because it is nicely split into extract and expand, which is necessary for how TLS works in QUIC.
+And it also uses [Bytes by Patrick Favre-Bulle](https://github.com/patrickfav/bytes-java)
+ because with it, by-quic-defined byte arrays are made immutable.
  
 And huge thanks to https://github.com/quicwg for making that promising protocol in the first place.

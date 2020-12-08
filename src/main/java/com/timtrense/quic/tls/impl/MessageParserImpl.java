@@ -1,7 +1,6 @@
 package com.timtrense.quic.tls.impl;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.List;
 import lombok.Data;
 import lombok.NonNull;
@@ -70,7 +69,7 @@ public class MessageParserImpl implements MessageParser {
         byte[] random = new byte[32];
         data.get( random );
 
-        if ( Arrays.equals( HelloRetryRequest.SPECIFIC_RANDOM, random ) ) {
+        if ( HelloRetryRequest.SPECIFIC_RANDOM.equals( random ) ) {
             message = new HelloRetryRequest();
         }
         else {
