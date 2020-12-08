@@ -17,6 +17,7 @@ import com.timtrense.quic.tls.extensions.PreSharedKeyClientHelloExtension;
 import com.timtrense.quic.tls.extensions.PreSharedKeyExtensionBase;
 import com.timtrense.quic.tls.extensions.PreSharedKeyServerHelloExtension;
 import com.timtrense.quic.tls.extensions.PskKeyExchangeModeExtension;
+import com.timtrense.quic.tls.extensions.RecordSizeLimitExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
 import com.timtrense.quic.tls.extensions.ServerSupportedVersionsExtension;
 import com.timtrense.quic.tls.extensions.SignatureAlgorithmsExtension;
@@ -185,6 +186,11 @@ public enum ExtensionType {
     SERVER_CERTIFICATE_TYPE( 20 ),                /* RFC 7250 */
 
     PADDING( 21 ),                                /* RFC 7685 */
+    /**
+     * RFC 8449
+     * @see RecordSizeLimitExtension
+     */
+    RECORD_SIZE_LIMIT( 28 ),
 
     /**
      * RFC 8446

@@ -34,7 +34,7 @@ public class MessageParserImplTest {
                         " 002b 0003 02 0304 " + // Supported Versions
                         " 000d 0010 000e 0403 0503 0603 0203 0804 0805 0806 " + // Signature Algorithms
                         " 002d 0002 01 01 " + // Key Exchange Modes
-                        " 001c 0002 4001 " +
+                        " 001c 0002 4001 " + // Record Size Limit
                         " ffa500320408ffffffffffffffff050480 00ffff07048000ffff08011001048000" +
                         " 75300901100f088394c8f03e51570806 048000ffff";
 

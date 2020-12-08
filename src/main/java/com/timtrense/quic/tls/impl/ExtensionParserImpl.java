@@ -30,6 +30,7 @@ import com.timtrense.quic.tls.extensions.KeyShareExtensionBase;
 import com.timtrense.quic.tls.extensions.KeyShareHelloRetryRequestExtension;
 import com.timtrense.quic.tls.extensions.KeyShareServerHelloExtension;
 import com.timtrense.quic.tls.extensions.PskKeyExchangeModeExtension;
+import com.timtrense.quic.tls.extensions.RecordSizeLimitExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
 import com.timtrense.quic.tls.extensions.ServerSupportedVersionsExtension;
@@ -85,6 +86,8 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parseSignatureAlgorithms( data, extensionDataLength );
             case PSK_KEY_EXCHANGE_MODES:
                 return parsePskKeyExchangeModes( data, extensionDataLength );
+            case RECORD_SIZE_LIMIT:
+                return parseRecordSizeLimit( data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
@@ -301,6 +304,14 @@ public class ExtensionParserImpl implements ExtensionParser {
 
         PskKeyExchangeModeExtension extension = new PskKeyExchangeModeExtension();
         extension.setKeyExchangeModes( keModes );
+        return extension;
+    }
+
+    private RecordSizeLimitExtension parseRecordSizeLimit(
+            ByteBuffer data, int maxLength ) {
+        int recordSizeLimit = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        RecordSizeLimitExtension extension = new RecordSizeLimitExtension();
+        extension.setRecordSizeLimit( recordSizeLimit );
         return extension;
     }
 
