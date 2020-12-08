@@ -21,6 +21,7 @@ import com.timtrense.quic.tls.OcspResponderId;
 import com.timtrense.quic.tls.ProtocolName;
 import com.timtrense.quic.tls.ProtocolVersion;
 import com.timtrense.quic.tls.ServerName;
+import com.timtrense.quic.tls.SignatureScheme;
 import com.timtrense.quic.tls.extensions.ApplicationLayerProtocolNegotiationExtension;
 import com.timtrense.quic.tls.extensions.ClientSupportedVersionsExtension;
 import com.timtrense.quic.tls.extensions.KeyShareClientHelloExtension;
@@ -30,6 +31,7 @@ import com.timtrense.quic.tls.extensions.KeyShareServerHelloExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
 import com.timtrense.quic.tls.extensions.ServerSupportedVersionsExtension;
+import com.timtrense.quic.tls.extensions.SignatureAlgorithmsExtension;
 import com.timtrense.quic.tls.extensions.StatusRequestExtensionBase;
 import com.timtrense.quic.tls.extensions.StatusRequestOcspExtension;
 import com.timtrense.quic.tls.extensions.SupportedGroupsExtension;
@@ -77,6 +79,8 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parseKeyShare( handshake, data, extensionDataLength );
             case SUPPORTED_VERSIONS:
                 return parseSupportedVersions( handshake, data, extensionDataLength );
+            case SIGNATURE_ALGORITHMS:
+                return parseSignatureAlgorithms( data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
@@ -257,6 +261,24 @@ public class ExtensionParserImpl implements ExtensionParser {
                     + handshake.getClass().getSimpleName() );
         }
 
+        return extension;
+    }
+
+    private SignatureAlgorithmsExtension parseSignatureAlgorithms(
+            ByteBuffer data, int maxLength ) throws MalformedTlsException {
+        int supportedSignatureAlgorithmsLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        SignatureScheme[] supportedSignatureAlgorithms = new SignatureScheme[
+                supportedSignatureAlgorithmsLength / 2 /* because SignatureScheme is encoded as uint16*/];
+        for ( int i = 0; i < supportedSignatureAlgorithms.length; i++ ) {
+            int signatureSchemeRaw = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+            SignatureScheme signatureScheme = SignatureScheme.findByValue( signatureSchemeRaw );
+            if ( signatureScheme == null ) {
+                throw new MalformedTlsException( "Illegal SignatureScheme.value: " + signatureSchemeRaw );
+            }
+            supportedSignatureAlgorithms[i] = signatureScheme;
+        }
+        SignatureAlgorithmsExtension extension = new SignatureAlgorithmsExtension();
+        extension.setSupportedSignatureAlgorithms( supportedSignatureAlgorithms );
         return extension;
     }
 
