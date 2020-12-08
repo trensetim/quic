@@ -8,16 +8,21 @@ import lombok.NonNull;
 import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 import com.timtrense.quic.impl.exception.MalformedTlsException;
 import com.timtrense.quic.impl.exception.QuicParsingException;
+import com.timtrense.quic.tls.CertificateStatusType;
 import com.timtrense.quic.tls.Extension;
 import com.timtrense.quic.tls.ExtensionType;
 import com.timtrense.quic.tls.HostName;
 import com.timtrense.quic.tls.NameType;
 import com.timtrense.quic.tls.NamedGroup;
+import com.timtrense.quic.tls.OcspExtensions;
+import com.timtrense.quic.tls.OcspResponderId;
 import com.timtrense.quic.tls.ProtocolName;
 import com.timtrense.quic.tls.ServerName;
 import com.timtrense.quic.tls.extensions.ApplicationLayerProtocolNegotiationExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
+import com.timtrense.quic.tls.extensions.StatusRequestExtensionBase;
+import com.timtrense.quic.tls.extensions.StatusRequestOcspExtension;
 import com.timtrense.quic.tls.extensions.SupportedGroupsExtension;
 
 /**
@@ -52,6 +57,8 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parseRenegotiationInfo( data, extensionDataLength );
             case APPLICATION_LAYER_PROTOCOL_NEGOTIATION:
                 return parseApplicationLayerProtocolNegotiation( data, extensionDataLength );
+            case STATUS_REQUEST:
+                return parseStatusRequest( data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
@@ -138,6 +145,41 @@ public class ExtensionParserImpl implements ExtensionParser {
         protocolNamesList.toArray( protocolNames );
         ApplicationLayerProtocolNegotiationExtension extension = new ApplicationLayerProtocolNegotiationExtension();
         extension.setProtocolNameList( protocolNames );
+        return extension;
+    }
+
+    private StatusRequestExtensionBase parseStatusRequest(
+            ByteBuffer data, int maxLength ) throws MalformedTlsException {
+        int certificateStatusTypeRaw = data.get() & 0xff;
+        CertificateStatusType certificateStatusType = CertificateStatusType.findByValue( certificateStatusTypeRaw );
+        if ( certificateStatusType == null ) {
+            throw new MalformedTlsException( "Invalid CertificateStatusType.value: " + certificateStatusTypeRaw );
+        }
+        if ( certificateStatusType != CertificateStatusType.OCSP ) {
+            throw new MalformedTlsException( "Unimplemented CertificateStatusType." + certificateStatusType.name() );
+        }
+        int responderIdListLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        // randomly approximate list length
+        List<OcspResponderId> responderIdList = new ArrayList<>( responderIdListLength / 10 + 1 );
+        while ( responderIdListLength > 0 ) {
+            int responderIdLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+            byte[] responderIdRaw = new byte[responderIdLength];
+            data.get( responderIdRaw );
+            OcspResponderId responderId = new OcspResponderId( responderIdRaw );
+            responderIdList.add( responderId );
+            responderIdListLength -= responderIdListLength + 2 /* responderIdListLength */;
+        }
+        OcspResponderId[] responderIds = new OcspResponderId[responderIdList.size()];
+        responderIdList.toArray( responderIds );
+
+        int requestExtensionsLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        byte[] requestExtensionsRaw = new byte[requestExtensionsLength];
+        data.get( requestExtensionsRaw );
+        OcspExtensions requestExtensions = new OcspExtensions( requestExtensionsRaw );
+
+        StatusRequestOcspExtension extension = new StatusRequestOcspExtension();
+        extension.setResponderIdList( responderIds );
+        extension.setRequestExtensions( requestExtensions );
         return extension;
     }
 }

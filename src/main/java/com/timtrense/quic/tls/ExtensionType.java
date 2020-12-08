@@ -20,6 +20,8 @@ import com.timtrense.quic.tls.extensions.PskKeyExchangeModeExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
 import com.timtrense.quic.tls.extensions.ServerSupportedVersionsExtension;
 import com.timtrense.quic.tls.extensions.SignatureAlgorithmsExtension;
+import com.timtrense.quic.tls.extensions.StatusRequestExtensionBase;
+import com.timtrense.quic.tls.extensions.StatusRequestOcspExtension;
 import com.timtrense.quic.tls.extensions.SupportedGroupsExtension;
 
 /**
@@ -149,7 +151,13 @@ public enum ExtensionType {
      */
     SERVER_NAME( 0 ),                             /* RFC 6066 */
     MAX_FRAGMENT_LENGTH( 1 ),                     /* RFC 6066 */
-    STATUS_REQUEST( 5 ),                          /* RFC 6066 */
+    /**
+     * RFC 6066
+     *
+     * @see StatusRequestExtensionBase
+     * @see StatusRequestOcspExtension
+     */
+    STATUS_REQUEST( 5 ),
 
     /**
      * RFC 8422, 7919
