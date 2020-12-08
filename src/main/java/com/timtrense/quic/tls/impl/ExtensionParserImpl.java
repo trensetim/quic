@@ -19,17 +19,21 @@ import com.timtrense.quic.tls.NamedGroup;
 import com.timtrense.quic.tls.OcspExtensions;
 import com.timtrense.quic.tls.OcspResponderId;
 import com.timtrense.quic.tls.ProtocolName;
+import com.timtrense.quic.tls.ProtocolVersion;
 import com.timtrense.quic.tls.ServerName;
 import com.timtrense.quic.tls.extensions.ApplicationLayerProtocolNegotiationExtension;
+import com.timtrense.quic.tls.extensions.ClientSupportedVersionsExtension;
 import com.timtrense.quic.tls.extensions.KeyShareClientHelloExtension;
 import com.timtrense.quic.tls.extensions.KeyShareExtensionBase;
 import com.timtrense.quic.tls.extensions.KeyShareHelloRetryRequestExtension;
 import com.timtrense.quic.tls.extensions.KeyShareServerHelloExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
+import com.timtrense.quic.tls.extensions.ServerSupportedVersionsExtension;
 import com.timtrense.quic.tls.extensions.StatusRequestExtensionBase;
 import com.timtrense.quic.tls.extensions.StatusRequestOcspExtension;
 import com.timtrense.quic.tls.extensions.SupportedGroupsExtension;
+import com.timtrense.quic.tls.extensions.SupportedVersionsExtensionBase;
 import com.timtrense.quic.tls.handshake.ClientHello;
 import com.timtrense.quic.tls.handshake.HelloRetryRequest;
 import com.timtrense.quic.tls.handshake.ServerHello;
@@ -71,6 +75,8 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parseStatusRequest( data, extensionDataLength );
             case KEY_SHARE:
                 return parseKeyShare( handshake, data, extensionDataLength );
+            case SUPPORTED_VERSIONS:
+                return parseSupportedVersions( handshake, data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
@@ -228,6 +234,34 @@ public class ExtensionParserImpl implements ExtensionParser {
         return extension;
     }
 
+    private SupportedVersionsExtensionBase parseSupportedVersions(
+            ExtensionCarryingHandshake handshake, ByteBuffer data, int maxLength ) throws MalformedTlsException {
+        SupportedVersionsExtensionBase extension;
+        if ( handshake instanceof ClientHello ) {
+            int versionsLength = data.get() & 0xff;
+            ProtocolVersion[] versions = new ProtocolVersion[
+                    versionsLength / 2 /* because each ProtocolVersion is encoded as uint16 */];
+            for ( int i = 0; i < versions.length; i++ ) {
+                versions[i] = parseProtocolVersion( data );
+            }
+            extension = new ClientSupportedVersionsExtension();
+            ( (ClientSupportedVersionsExtension)extension ).setVersions( versions );
+        }
+        else if ( handshake instanceof ServerHello ) {
+            ProtocolVersion selectedVersion = parseProtocolVersion( data );
+            extension = new ServerSupportedVersionsExtension();
+            ( (ServerSupportedVersionsExtension)extension ).setSelectedVersion( selectedVersion );
+        }
+        else {
+            throw new MalformedTlsException( "illegal SUPPORTED_VERSIONS extension in message of type "
+                    + handshake.getClass().getSimpleName() );
+        }
+
+        return extension;
+    }
+
+    // supportive methods...
+
     private KeyShareEntry parseKeyShareEntry( ByteBuffer data, int maxLength ) throws MalformedTlsException {
         NamedGroup namedGroup = parseNamedGroup( data );
         int keyExchangeLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
@@ -247,5 +281,14 @@ public class ExtensionParserImpl implements ExtensionParser {
             throw new MalformedTlsException( "Invalid NamedGroup.value: " + namedGroupRaw );
         }
         return namedGroup;
+    }
+
+    private ProtocolVersion parseProtocolVersion( ByteBuffer data ) throws MalformedTlsException {
+        int protocolVersionRaw = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        ProtocolVersion protocolVersion = ProtocolVersion.findByValue( protocolVersionRaw );
+        if ( protocolVersion == null ) {
+            throw new MalformedTlsException( "Invalid ProtocolVersion.value: " + protocolVersionRaw );
+        }
+        return protocolVersion;
     }
 }
