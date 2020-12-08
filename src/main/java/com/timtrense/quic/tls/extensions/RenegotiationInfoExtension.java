@@ -51,7 +51,10 @@ import com.timtrense.quic.tls.ExtensionType;
 @EqualsAndHashCode( callSuper = true )
 public class RenegotiationInfoExtension extends Extension {
 
-    private byte[] renegotiatedConnection;
+    /**
+     * <b>Implementation Note: the field will be set to null upon instantiation</b>
+     */
+    private byte[] renegotiatedConnection=new byte[0];
 
     @Override
     public ExtensionType getExtensionType() {

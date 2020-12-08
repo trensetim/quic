@@ -12,6 +12,7 @@ import com.timtrense.quic.tls.Extension;
 import com.timtrense.quic.tls.ExtensionType;
 import com.timtrense.quic.tls.HostName;
 import com.timtrense.quic.tls.NameType;
+import com.timtrense.quic.tls.NamedGroup;
 import com.timtrense.quic.tls.ServerName;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
@@ -81,8 +82,23 @@ public class ExtensionParserImpl implements ExtensionParser {
         return extension;
     }
 
-    private SupportedGroupsExtension parseSupportedGroups( ByteBuffer data, int extensionDataLength ) {
-        return null; // TODO implement
+    private SupportedGroupsExtension parseSupportedGroups( ByteBuffer data, int extensionDataLength ) throws MalformedTlsException {
+        int namedGroupListLength = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+        // all named group values are 2 bytes wide, so length of the list is half the length in bytes
+        namedGroupListLength /= 2;
+        NamedGroup[] namedGroupList = new NamedGroup[namedGroupListLength];
+
+        for ( int i = 0; i < namedGroupListLength; i++ ) {
+            int value = (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 );
+            NamedGroup group = NamedGroup.findByValue( value );
+            if ( group == null ) {
+                throw new MalformedTlsException( "Invalid NamedGroup.value: " + value );
+            }
+        }
+
+        SupportedGroupsExtension extension = new SupportedGroupsExtension();
+        extension.setNamedGroupList( namedGroupList );
+        return extension;
     }
 
     private RenegotiationInfoExtension parseRenegotiationInfo( ByteBuffer data, int maxLength ) {

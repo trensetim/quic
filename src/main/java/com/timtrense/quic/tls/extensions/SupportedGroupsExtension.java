@@ -2,7 +2,6 @@ package com.timtrense.quic.tls.extensions;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 
 import com.timtrense.quic.tls.Extension;
 import com.timtrense.quic.tls.ExtensionType;
@@ -45,7 +44,7 @@ public class SupportedGroupsExtension extends Extension {
     /**
      * <b>Implementation Note: the field will be set to an empty array upon instantiation</b>
      */
-    private @NonNull NamedGroup[] namedGroupList = new NamedGroup[0];
+    private NamedGroup[] namedGroupList = new NamedGroup[0];
 
     @Override
     public ExtensionType getExtensionType() {
