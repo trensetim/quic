@@ -9,7 +9,7 @@ import com.timtrense.quic.TransportParameterType;
 
 public class TransportParameterCollectionImpl implements TransportParameterCollection {
 
-    public static final Map<TransportParameterType, TransportParameter<?>> PARAMETER_DEFAULT_VALUES;
+    private static final Map<TransportParameterType, TransportParameter<?>> PARAMETER_DEFAULT_VALUES;
 
     static {
         PARAMETER_DEFAULT_VALUES = new EnumMap<>( TransportParameterType.class );
