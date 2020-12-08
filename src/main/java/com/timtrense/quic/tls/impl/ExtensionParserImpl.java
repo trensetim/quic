@@ -30,6 +30,7 @@ import com.timtrense.quic.tls.extensions.KeyShareExtensionBase;
 import com.timtrense.quic.tls.extensions.KeyShareHelloRetryRequestExtension;
 import com.timtrense.quic.tls.extensions.KeyShareServerHelloExtension;
 import com.timtrense.quic.tls.extensions.PskKeyExchangeModeExtension;
+import com.timtrense.quic.tls.extensions.QuicTransportParametersExtension;
 import com.timtrense.quic.tls.extensions.RecordSizeLimitExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
@@ -88,6 +89,8 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parsePskKeyExchangeModes( data, extensionDataLength );
             case RECORD_SIZE_LIMIT:
                 return parseRecordSizeLimit( data, extensionDataLength );
+            case QUIC_TRANSPORT_PARAMETERS:
+                return parseQuicTransportParameters( data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
@@ -313,6 +316,11 @@ public class ExtensionParserImpl implements ExtensionParser {
         RecordSizeLimitExtension extension = new RecordSizeLimitExtension();
         extension.setRecordSizeLimit( recordSizeLimit );
         return extension;
+    }
+
+    private QuicTransportParametersExtension parseQuicTransportParameters(
+            ByteBuffer data, int maxLength ) {
+        return null; //TODO: implement
     }
 
     // supportive methods...

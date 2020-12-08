@@ -38,9 +38,35 @@ import com.timtrense.quic.tls.ExtensionType;
  * fatal unsupported_extension alert MUST be sent by an implementation
  * that supports this extension if the extension is received when the
  * transport is not QUIC.
+ * <h2>Transport Parameter Encoding</h2>
+ * The extension_data field of the quic_transport_parameters extension
+ * defined in [QUIC-TLS] contains the QUIC transport parameters.  They
+ * are encoded as a sequence of transport parameters, as shown in
+ * Figure 20:
+ * <pre>
+ * Transport Parameters {
+ *     Transport Parameter (..) ...,
+ * }
+ * </pre>
+ * Each transport parameter is encoded as an (identifier, length, value)
+ * tuple, as shown in Figure 21:
+ * <pre>
+ * Transport Parameter {
+ *   Transport Parameter ID (i),
+ *   Transport Parameter Length (i),
+ *   Transport Parameter Value (..),
+ * }
+ * </pre>
+ * The Transport Parameter Length field contains the length of the
+ * Transport Parameter Value field.
+ *
+ * QUIC encodes transport parameters into a sequence of bytes, which is
+ * then included in the cryptographic handshake.
  *
  * @author Tim Trense
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-tls-32#section-8.2">QUIC TLS Spec/Section 8.2</a>
+ * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-18">QUIC Spec/Section 18</a> for
+ * transport parameter encoding
  */
 @Data
 @EqualsAndHashCode( callSuper = true )

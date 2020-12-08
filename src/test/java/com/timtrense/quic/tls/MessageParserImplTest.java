@@ -35,8 +35,13 @@ public class MessageParserImplTest {
                         " 000d 0010 000e 0403 0503 0603 0203 0804 0805 0806 " + // Signature Algorithms
                         " 002d 0002 01 01 " + // Key Exchange Modes
                         " 001c 0002 4001 " + // Record Size Limit
-                        " ffa500320408ffffffffffffffff050480 00ffff07048000ffff08011001048000" +
-                        " 75300901100f088394c8f03e51570806 048000ffff";
+                        " ffa5 0032" + // QUIC Transport Parameters
+                        " 0408ffffffffffff" +
+                        " ffff05048000ffff" +
+                        " 07048000ffff0801" +
+                        " 1001048000753009" +
+
+                        " 01100f088394c8f03e51570806 048000ffff";
 
         hexdumpFromAppendixA = hexdumpFromAppendixA.replaceAll( " ", "" );
         cryptoPayloadAppendixA = HexByteStringConvertHelper.hexStringToByteArray( hexdumpFromAppendixA );
