@@ -20,6 +20,7 @@ import com.timtrense.quic.tls.OcspExtensions;
 import com.timtrense.quic.tls.OcspResponderId;
 import com.timtrense.quic.tls.ProtocolName;
 import com.timtrense.quic.tls.ProtocolVersion;
+import com.timtrense.quic.tls.PskKeyExchangeMode;
 import com.timtrense.quic.tls.ServerName;
 import com.timtrense.quic.tls.SignatureScheme;
 import com.timtrense.quic.tls.extensions.ApplicationLayerProtocolNegotiationExtension;
@@ -28,6 +29,7 @@ import com.timtrense.quic.tls.extensions.KeyShareClientHelloExtension;
 import com.timtrense.quic.tls.extensions.KeyShareExtensionBase;
 import com.timtrense.quic.tls.extensions.KeyShareHelloRetryRequestExtension;
 import com.timtrense.quic.tls.extensions.KeyShareServerHelloExtension;
+import com.timtrense.quic.tls.extensions.PskKeyExchangeModeExtension;
 import com.timtrense.quic.tls.extensions.RenegotiationInfoExtension;
 import com.timtrense.quic.tls.extensions.ServerNameIndicationExtension;
 import com.timtrense.quic.tls.extensions.ServerSupportedVersionsExtension;
@@ -81,6 +83,8 @@ public class ExtensionParserImpl implements ExtensionParser {
                 return parseSupportedVersions( handshake, data, extensionDataLength );
             case SIGNATURE_ALGORITHMS:
                 return parseSignatureAlgorithms( data, extensionDataLength );
+            case PSK_KEY_EXCHANGE_MODES:
+                return parsePskKeyExchangeModes( data, extensionDataLength );
             // TODO: other cases
             default:
                 throw new MalformedTlsException( "Unimplemented TLS handshake message type: " + extensionType.name() );
@@ -279,6 +283,24 @@ public class ExtensionParserImpl implements ExtensionParser {
         }
         SignatureAlgorithmsExtension extension = new SignatureAlgorithmsExtension();
         extension.setSupportedSignatureAlgorithms( supportedSignatureAlgorithms );
+        return extension;
+    }
+
+    private PskKeyExchangeModeExtension parsePskKeyExchangeModes(
+            ByteBuffer data, int maxLength ) throws MalformedTlsException {
+        int keModesLength = data.get() & 0xff;
+        PskKeyExchangeMode[] keModes = new PskKeyExchangeMode[keModesLength /* because PKEM is encoded as uint8 */];
+        for ( int i = 0; i < keModesLength; i++ ) {
+            int keModeRaw = data.get() & 0xff;
+            PskKeyExchangeMode keMode = PskKeyExchangeMode.findByValue( keModeRaw );
+            if ( keMode == null ) {
+                throw new MalformedTlsException( "Illegal PskKeyExchangeMode.value: " + keModeRaw );
+            }
+            keModes[i] = keMode;
+        }
+
+        PskKeyExchangeModeExtension extension = new PskKeyExchangeModeExtension();
+        extension.setKeyExchangeModes( keModes );
         return extension;
     }
 
