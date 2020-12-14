@@ -36,7 +36,7 @@ public enum TransportParameterType {
      * by the client; see Section 7.3.  This transport parameter is only
      * sent by a server.
      */
-    ORIGINAL_DESTINATION_CONNECTION_ID( 0x00, true, long.class ),
+    ORIGINAL_DESTINATION_CONNECTION_ID( 0x00, true, byte[].class /* variable length, usually 8 bytes */ ),
     /**
      * The max idle timeout is a value in
      * milliseconds that is encoded as an integer; see (Section 10.1).
@@ -235,13 +235,13 @@ public enum TransportParameterType {
      * included in the Source Connection ID field of the first Initial
      * packet it sends for the connection; see Section 7.3.
      */
-    INITIAL_SOURCE_CONNECTION_ID( 0x0f, false, long.class ),
+    INITIAL_SOURCE_CONNECTION_ID( 0x0f, false, byte[].class /* variable length, usually 8 bytes */ ),
     /**
      * The value that the server
      * included in the Source Connection ID field of a Retry packet; see
      * Section 7.3.  This transport parameter is only sent by a server.
      */
-    RETRY_SOURCE_CONNECTION_ID( 0x10, true, long.class );
+    RETRY_SOURCE_CONNECTION_ID( 0x10, true, byte[].class /* variable length, usually 8 bytes */ );
 
     @Getter
     private final int value;
