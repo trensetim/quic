@@ -5,6 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
 
+import at.favre.lib.bytes.BytesValidator;
+
+import com.timtrense.quic.PreferredAddress;
+import com.timtrense.quic.TransportParameter;
+import com.timtrense.quic.TransportParameterType;
+import com.timtrense.quic.VariableLengthInteger;
+import com.timtrense.quic.impl.base.ByteArrayTransportParameterImpl;
+import com.timtrense.quic.impl.base.ConnectionIdImpl;
+import com.timtrense.quic.impl.base.FlagTransportParameterImpl;
+import com.timtrense.quic.impl.base.IntegerTransportParameterImpl;
+import com.timtrense.quic.impl.base.PreferredAddressImpl;
+import com.timtrense.quic.impl.base.PreferredAddressTransportParameterImpl;
+import com.timtrense.quic.impl.base.StatelessResetTokenImpl;
+import com.timtrense.quic.impl.base.TransportParameterCollectionImpl;
 import com.timtrense.quic.impl.base.VariableLengthIntegerEncoder;
 import com.timtrense.quic.impl.exception.MalformedTlsException;
 import com.timtrense.quic.impl.exception.QuicParsingException;
@@ -50,6 +64,19 @@ import com.timtrense.quic.tls.handshake.ServerHello;
  * @author Tim Trense
  */
 public class ExtensionParserImpl implements ExtensionParser {
+
+    /**
+     * Byte-Array checking function to fire true if the array checked is not all zeros.
+     * This is the
+     */
+    private static final BytesValidator NOT_ONLY_ZEROS = byteArrayToValidate -> {
+        for ( byte b : byteArrayToValidate ) {
+            if ( b != 0 ) {
+                return true;
+            }
+        }
+        return false;
+    };
 
     @Override
     public Extension parseExtension(
@@ -319,11 +346,104 @@ public class ExtensionParserImpl implements ExtensionParser {
     }
 
     private QuicTransportParametersExtension parseQuicTransportParameters(
-            ByteBuffer data, int maxLength ) {
-        return null; //TODO: implement
+            ByteBuffer data, int maxLength ) throws MalformedTlsException {
+        TransportParameterCollectionImpl collection = new TransportParameterCollectionImpl();
+
+        while ( maxLength > 0 ) {
+            VariableLengthInteger typeRaw = VariableLengthInteger.decode( data );
+            if ( typeRaw == null ) {
+                throw new MalformedTlsException( "Malformed VariableLengthInteger TransportParameterType.value" );
+            }
+            TransportParameterType type = TransportParameterType.findByValue( (int)typeRaw.getValue() );
+            if ( type == null ) {
+                throw new MalformedTlsException( "Invalid TransportParameterType.value: " + typeRaw );
+            }
+            VariableLengthInteger length = VariableLengthInteger.decode( data );
+            if ( length == null ) {
+                throw new MalformedTlsException( "Malformed VariableLengthInteger length of TransportParameter" );
+            }
+
+            TransportParameter<?> parameter;
+            switch ( type ) {
+                case ORIGINAL_DESTINATION_CONNECTION_ID: // fall-through
+                case INITIAL_SOURCE_CONNECTION_ID: // fall-through
+                case RETRY_SOURCE_CONNECTION_ID: // fall-through
+                case STATELESS_RESET_TOKEN: {
+                    byte[] value = new byte[(int)length.getValue()];
+                    data.get( value );
+                    parameter = new ByteArrayTransportParameterImpl( type, value );
+                }
+                break;
+                case MAX_IDLE_TIMEOUT: // fall-through
+                case MAX_UDP_PAYLOAD_SIZE: // fall-through
+                case INITIAL_MAX_DATA: // fall-through
+                case INITIAL_MAX_STREAM_DATA_BIDI_LOCAL: // fall-through
+                case INITIAL_MAX_STREAM_DATA_BIDI_REMOTE: // fall-through
+                case INITIAL_MAX_STREAM_DATA_UNI: // fall-through
+                case INITIAL_MAX_STREAMS_BIDI: // fall-through
+                case INITIAL_MAX_STREAMS_UNI: // fall-through
+                case ACK_DELAY_EXPONENT: // fall-through
+                case MAX_ACK_DELAY: // fall-through
+                case ACTIVE_CONNECTION_ID_LIMIT: {
+                    long value = VariableLengthIntegerEncoder.decode( data );
+                    parameter = new IntegerTransportParameterImpl( type, value );
+                }
+                break;
+                case DISABLE_ACTIVE_MIGRATION: {
+                    parameter = new FlagTransportParameterImpl( type, true );
+                }
+                break;
+                case PREFERRED_ADDRESS: {
+                    PreferredAddress value = parsePreferredAddress( data, (int)length.getValue() );
+                    parameter = new PreferredAddressTransportParameterImpl( type, value );
+                }
+                break;
+                default:
+                    throw new MalformedTlsException( "Unimplemented TransportParameterType: " + type );
+            }
+            maxLength -= typeRaw.getEncodedLengthInBytes() + length.getValue() + length.getEncodedLengthInBytes();
+            collection.setParameter( parameter );
+        }
+
+        QuicTransportParametersExtension extension = new QuicTransportParametersExtension();
+        extension.setTransportParameters( collection );
+        return extension;
     }
 
     // supportive methods...
+
+    private PreferredAddress parsePreferredAddress( ByteBuffer data, int maxLength ) {
+        PreferredAddressImpl preferredAddress = new PreferredAddressImpl();
+        byte[] ipv4Address = new byte[4];
+        data.get( ipv4Address );
+        // Spec: "Servers MAY choose to only send a preferred address
+        //      of one address family by sending an all-zero address and port
+        //      (0.0.0.0:0 or ::.0) for the other family.  IP addresses are
+        //      encoded in network byte order." Page 125
+        if ( NOT_ONLY_ZEROS.validate( ipv4Address ) ) {
+            preferredAddress.setIpv4Address( ipv4Address );
+        }
+        preferredAddress.setIpv4Port( (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 ) );
+
+        byte[] ipv6Address = new byte[16];
+        data.get( ipv6Address );
+        if ( NOT_ONLY_ZEROS.validate( ipv6Address ) ) {
+            preferredAddress.setIpv6Address( ipv6Address );
+        }
+        preferredAddress.setIpv6Port( (int)VariableLengthIntegerEncoder.decodeFixedLengthInteger( data, 2 ) );
+
+        int connectionIdSize = data.get() & 0xff;
+        byte[] connectionIdRaw = new byte[connectionIdSize];
+        data.get( connectionIdRaw );
+        // Spec: "contain an alternative connection ID that has a sequence number of 1; see Section 5.1.1" Page 126
+        preferredAddress.setConnectionId( new ConnectionIdImpl( connectionIdRaw, VariableLengthInteger.ONE ) );
+
+        byte[] statelessResetTokenRaw = new byte[16];
+        data.get( statelessResetTokenRaw );
+        preferredAddress.setStatelessResetToken( new StatelessResetTokenImpl( statelessResetTokenRaw ) );
+
+        return preferredAddress;
+    }
 
     private KeyShareEntry parseKeyShareEntry( ByteBuffer data, int maxLength ) throws MalformedTlsException {
         NamedGroup namedGroup = parseNamedGroup( data );

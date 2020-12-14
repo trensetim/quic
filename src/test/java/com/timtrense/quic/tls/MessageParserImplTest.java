@@ -36,12 +36,14 @@ public class MessageParserImplTest {
                         " 002d 0002 01 01 " + // Key Exchange Modes
                         " 001c 0002 4001 " + // Record Size Limit
                         " ffa5 0032" + // QUIC Transport Parameters
-                        " 0408ffffffffffff" +
-                        " ffff05048000ffff" +
-                        " 07048000ffff0801" +
-                        " 1001048000753009" +
-
-                        " 01100f088394c8f03e51570806 048000ffff";
+                        " 04 08 ffffffffffffffff" + // .. INITIAL_MAX_DATA
+                        " 05 04 8000ffff" + // .. INITIAL_MAX_STREAM_DATA_BIDI_LOCAL
+                        " 07 04 8000ffff" + // .. INITIAL_MAX_STREAM_DATA_UNI
+                        " 08 01 10" + // .. INITIAL_MAX_STREAMS_BIDI
+                        " 01 04 80007530" + // .. MAX_IDLE_TIMEOUT
+                        " 09 01 10 " + // .. INITIAL_MAX_STREAMS_UNI
+                        " 0f 08 8394c8f03e515708" + // .. INITIAL_SOURCE_CONNECTION_ID
+                        " 06 04 8000ffff"; // .. INITIAL_MAX_STREAM_DATA_BIDI_REMOTE
 
         hexdumpFromAppendixA = hexdumpFromAppendixA.replaceAll( " ", "" );
         cryptoPayloadAppendixA = HexByteStringConvertHelper.hexStringToByteArray( hexdumpFromAppendixA );
