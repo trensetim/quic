@@ -2,13 +2,15 @@ package com.timtrense.quic;
 
 import java.util.List;
 
+import com.timtrense.quic.impl.packets.RetryPacketImpl;
+
 /**
  * UDP datagram payload.
  *
  * See {@link Packet} for details on packets in general.
  *
  * This class gives an abstraction for packets actually containing {@link Frame Frames} as payload,
- * because not all packets do.
+ * because not all packets do (eg. the {@link VersionNegotiationPacket} or {@link RetryPacketImpl}).
  *
  * @author Tim Trense
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-12">QUIC Spec/Section 12</a>
