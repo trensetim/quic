@@ -34,9 +34,16 @@ public class EndpointConfiguration {
     private int maxDatagramSize = 1600;
 
     /**
-     * @see Receiver#getReceiveDatagramQueueSizeLimit()
+     * @see Receiver#getDatagramPool()
+     * @see DatagramPool#getPoolSizeLimit()
      */
     private int receiveDatagramQueueSizeLimit = 3;
+
+    /**
+     * @see DatagramAssembler#getDatagramPool()
+     * @see DatagramPool#getPoolSizeLimit()
+     */
+    private int sendDatagramQueueSizeLimit = 3;
 
     /**
      * @see DatagramParser#getParseDatagramQueueSizeLimit()
@@ -44,12 +51,17 @@ public class EndpointConfiguration {
     private int parseDatagramQueueSizeLimit = 10;
 
     /**
-     * @see Receiver#getReceiveTargetBlockingTimeout()
+     * @see Receiver#getReceivedQueueBlockTimeout()
      */
-    private int receiveTargetBlockingTimeout = 1000;
+    private int receiverReceivedQueueBlockTimeout = 1000;
 
     /**
-     * @see DatagramParser#getParsedTargetBlockingTimeout()
+     * @see DatagramAssembler#getSendQueueBlockTimeout()
+     */
+    private int assemblerSendQueueBlockTimeout = 1000;
+
+    /**
+     * @see DatagramParser#getParsedQueueBlockTimeout()
      */
     private int parsedTargetBlockingTimeout = 1000;
 

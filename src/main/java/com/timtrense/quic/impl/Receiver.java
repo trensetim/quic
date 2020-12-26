@@ -31,7 +31,7 @@ public class Receiver extends Thread {
      * The queue to write received datagrams to
      */
     @Getter
-    private final @NonNull BlockingQueue<ReceivedDatagram> targetReceivedQueue;
+    private final @NonNull BlockingQueue<ReceivedDatagram> receivedQueue;
     /**
      * all registered listeners to notify about state changes
      */
@@ -44,12 +44,12 @@ public class Receiver extends Thread {
     @NonNull
     private DatagramSocket socket;
     /**
-     * The number of milliseconds the {@link Receiver#getTargetReceivedQueue()} may block before allowing
+     * The number of milliseconds the {@link #getReceivedQueue() target received queue} may block before allowing
      * the {@link Receiver} to offer a new, received datagram. If this timeout elapses before the receiver can put
      * the new datagram to the queue, the receiver will go to {@link ReceiverState#ERROR} and will be stopped
      */
     @Getter
-    private int receiveTargetBlockingTimeout;
+    private int receivedQueueBlockTimeout;
     /**
      * the current state
      */
@@ -59,13 +59,13 @@ public class Receiver extends Thread {
     /**
      * Creates a new receiver, reading from the given socket to the given target queue
      *
-     * @param socket              the source to read datagrams from
-     * @param targetReceivedQueue the queue to offer all received datagrams to
-     * @param configuration       the initial configuration to apply
+     * @param socket        the source to read datagrams from
+     * @param receivedQueue the queue to offer all received datagrams to
+     * @param configuration the initial configuration to apply
      */
     public Receiver(
             @NonNull DatagramSocket socket,
-            @NonNull BlockingQueue<ReceivedDatagram> targetReceivedQueue,
+            @NonNull BlockingQueue<ReceivedDatagram> receivedQueue,
             @NonNull EndpointConfiguration configuration
     ) {
         this.socket = socket;
@@ -73,8 +73,8 @@ public class Receiver extends Thread {
                 configuration.getReceiveDatagramQueueSizeLimit(),
                 configuration.getMaxDatagramSize()
         );
-        this.targetReceivedQueue = targetReceivedQueue;
-        receiveTargetBlockingTimeout = configuration.getReceiveTargetBlockingTimeout();
+        this.receivedQueue = receivedQueue;
+        receivedQueueBlockTimeout = configuration.getReceiverReceivedQueueBlockTimeout();
         this.receiverState = ReceiverState.NEW;
 
         setDaemon( true );
@@ -97,9 +97,9 @@ public class Receiver extends Thread {
                             counter++,
                             (short)0
                     );
-                    offered = targetReceivedQueue.offer(
+                    offered = receivedQueue.offer(
                             receivedDatagram,
-                            receiveTargetBlockingTimeout,
+                            receivedQueueBlockTimeout,
                             TimeUnit.MILLISECONDS
                     );
                     if ( !offered ) {
@@ -142,16 +142,16 @@ public class Receiver extends Thread {
     }
 
     /**
-     * sets the value corresponding to {@link #getReceiveTargetBlockingTimeout()}
+     * sets the value corresponding to {@link #getReceivedQueueBlockTimeout()}
      *
-     * @param receiveTargetBlockingTimeout the positive timeout in milliseconds to set
+     * @param receivedQueueBlockTimeout the positive timeout in milliseconds to set
      */
-    public void setReceiveTargetBlockingTimeout( int receiveTargetBlockingTimeout ) {
-        if ( receiveTargetBlockingTimeout <= 0 ) {
+    public void setReceivedQueueBlockTimeout( int receivedQueueBlockTimeout ) {
+        if ( receivedQueueBlockTimeout <= 0 ) {
             throw new IllegalArgumentException( "Cannot set a non-positive" +
                     " receiveTargetBlockingTimeout for a Receiver" );
         }
-        this.receiveTargetBlockingTimeout = receiveTargetBlockingTimeout;
+        this.receivedQueueBlockTimeout = receivedQueueBlockTimeout;
     }
 
     /**

@@ -37,7 +37,7 @@ public class DatagramParser implements Runnable {
      */
     @Getter
     @NonNull
-    private final BlockingQueue<Packet> targetParsedQueue;
+    private final BlockingQueue<Packet> parsedQueue;
     /**
      * the recycler for fully parsed datagrams
      */
@@ -45,13 +45,13 @@ public class DatagramParser implements Runnable {
     @Setter
     private DatagramRecycler datagramRecycler;
     /**
-     * The number of milliseconds the {@link #getTargetParsedQueue()} may block before allowing
+     * The number of milliseconds the {@link #getParsedQueue() parsed queue} may block before allowing
      * the {@link DatagramParser} to offer a new, parsed {@link Packet}.
      * If this timeout elapses before the parser can put
      * the new packet to the queue, the parser will go to {@link DatagramParserState#ERROR} and will be stopped
      */
     @Getter
-    private int parsedTargetBlockingTimeout;
+    private int parsedQueueBlockTimeout;
     /**
      * the current state
      */
@@ -80,10 +80,10 @@ public class DatagramParser implements Runnable {
             @NonNull EndpointConfiguration configuration,
             @NonNull PacketParser packetParser
     ) {
-        this.targetParsedQueue = targetReceivedQueue;
+        this.parsedQueue = targetReceivedQueue;
         this.parseQueue = new LinkedBlockingQueue<>( configuration.getParseDatagramQueueSizeLimit() );
         this.packetParser = packetParser;
-        setParsedTargetBlockingTimeout( configuration.getParsedTargetBlockingTimeout() );
+        setParsedQueueBlockTimeout( configuration.getParsedTargetBlockingTimeout() );
         this.state = DatagramParserState.NEW;
     }
 
@@ -151,8 +151,8 @@ public class DatagramParser implements Runnable {
                         }
                     }
                     for ( Packet p : packets ) {
-                        synchronized( targetParsedQueue ) {
-                            offered = targetParsedQueue.offer( p, parsedTargetBlockingTimeout, TimeUnit.MILLISECONDS );
+                        synchronized( parsedQueue ) {
+                            offered = parsedQueue.offer( p, parsedQueueBlockTimeout, TimeUnit.MILLISECONDS );
                         }
                         if ( !offered ) {
                             throw new IOException( "Timeout on offering a Packet to the target queue" );
@@ -182,16 +182,16 @@ public class DatagramParser implements Runnable {
     }
 
     /**
-     * sets the value corresponding to {@link #getParsedTargetBlockingTimeout()} ()}
+     * sets the value corresponding to {@link #getParsedQueueBlockTimeout()} ()}
      *
-     * @param parsedTargetBlockingTimeout the positive timeout in milliseconds to set
+     * @param parsedQueueBlockTimeout the positive timeout in milliseconds to set
      */
-    public void setParsedTargetBlockingTimeout( int parsedTargetBlockingTimeout ) {
-        if ( parsedTargetBlockingTimeout <= 0 ) {
+    public void setParsedQueueBlockTimeout( int parsedQueueBlockTimeout ) {
+        if ( parsedQueueBlockTimeout <= 0 ) {
             throw new IllegalArgumentException( "Cannot set a non-positive" +
                     " parsedTargetBlockingTimeout for a DatagramParser" );
         }
-        this.parsedTargetBlockingTimeout = parsedTargetBlockingTimeout;
+        this.parsedQueueBlockTimeout = parsedQueueBlockTimeout;
     }
 
     /**
