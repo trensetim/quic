@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,8 +20,22 @@ import lombok.Setter;
  * @author Tim Trense
  */
 @EqualsAndHashCode( callSuper = true )
-public class Receiver extends Thread implements DatagramRecycler {
+public class Receiver extends Thread {
 
+    /**
+     * The INTERNAL pool to take empty, yet to fill, datagrams from
+     */
+    @Getter
+    private final DatagramPool datagramPool;
+    /**
+     * The queue to write received datagrams to
+     */
+    @Getter
+    private final @NonNull BlockingQueue<ReceivedDatagram> targetReceivedQueue;
+    /**
+     * all registered listeners to notify about state changes
+     */
+    private final Set<ReceiverStateListener> stateListenerSet = new HashSet<>();
     /**
      * The socket to receive from
      */
@@ -31,15 +44,6 @@ public class Receiver extends Thread implements DatagramRecycler {
     @NonNull
     private DatagramSocket socket;
     /**
-     * The INTERNAL queue to poll empty, yet to fill, datagrams from
-     */
-    private final LinkedBlockingQueue<DatagramPacket> receiveQueue;
-    /**
-     * The maximum number of bytes that a datagram may contain, thus the length of the allocated buffer
-     */
-    @Getter
-    private int maxDatagramSize;
-    /**
      * The number of milliseconds the {@link Receiver#getTargetReceivedQueue()} may block before allowing
      * the {@link Receiver} to offer a new, received datagram. If this timeout elapses before the receiver can put
      * the new datagram to the queue, the receiver will go to {@link ReceiverState#ERROR} and will be stopped
@@ -47,19 +51,10 @@ public class Receiver extends Thread implements DatagramRecycler {
     @Getter
     private int receiveTargetBlockingTimeout;
     /**
-     * The queue to write received datagrams to
-     */
-    @Getter
-    private final @NonNull BlockingQueue<ReceivedDatagram> targetReceivedQueue;
-    /**
      * the current state
      */
     @Getter
     private ReceiverState receiverState;
-    /**
-     * all registered listeners to notify about state changes
-     */
-    private final Set<ReceiverStateListener> stateListenerSet = new HashSet<>();
 
     /**
      * Creates a new receiver, reading from the given socket to the given target queue
@@ -74,51 +69,16 @@ public class Receiver extends Thread implements DatagramRecycler {
             @NonNull EndpointConfiguration configuration
     ) {
         this.socket = socket;
-        this.receiveQueue = new LinkedBlockingQueue<>( configuration.getReceiveDatagramQueueSizeLimit() );
+        this.datagramPool = new DatagramPool(
+                configuration.getReceiveDatagramQueueSizeLimit(),
+                configuration.getMaxDatagramSize()
+        );
         this.targetReceivedQueue = targetReceivedQueue;
-        setMaxDatagramSize( configuration.getMaxDatagramSize() );
         receiveTargetBlockingTimeout = configuration.getReceiveTargetBlockingTimeout();
         this.receiverState = ReceiverState.NEW;
 
         setDaemon( true );
         setName( configuration.getEndpointName() + ".Receiver" );
-    }
-
-    /**
-     * @return polls a {@link DatagramPacket} from the queue if available, otherwise creates one
-     */
-    private DatagramPacket poll() {
-        boolean isEmpty;
-        synchronized( receiveQueue ) {
-            isEmpty = receiveQueue.isEmpty();
-        }
-        if ( isEmpty ) {
-            byte[] buffer = new byte[maxDatagramSize];
-            return new DatagramPacket( buffer, buffer.length );
-        }
-        else {
-            synchronized( receiveQueue ) {
-                return receiveQueue.poll();
-            }
-        }
-    }
-
-    /**
-     * Offers a datagram to the queue to read to.
-     *
-     * @param datagram the datagram which can be filled
-     * @return true if the datagram was added to the queue, false otherwise (presumably because queue is full or the
-     * datagram does not match the required size constraints)
-     */
-    @Override
-    public boolean giveBack( DatagramPacket datagram ) {
-        if ( datagram == null ) {
-            return false;
-        }
-        if ( datagram.getLength() != maxDatagramSize ) {
-            return false;
-        }
-        return receiveQueue.offer( datagram );
     }
 
     @Override
@@ -129,7 +89,7 @@ public class Receiver extends Thread implements DatagramRecycler {
         try {
             while ( !isInterrupted() ) {
                 try {
-                    DatagramPacket datagram = poll();
+                    DatagramPacket datagram = datagramPool.take();
                     socket.receive( datagram );
                     ReceivedDatagram receivedDatagram = new ReceivedDatagram(
                             datagram,
@@ -178,38 +138,6 @@ public class Receiver extends Thread implements DatagramRecycler {
     public void removeListener( @NonNull ReceiverStateListener listener ) {
         synchronized( stateListenerSet ) {
             stateListenerSet.remove( listener );
-        }
-    }
-
-    /**
-     * changes the maximum size that a received datagram may contain in bytes.
-     * By changing this size, all buffered datagrams are dropped and need to be reallocated.
-     *
-     * @param maxDatagramSize the new limit on the datagram size
-     * @throws IllegalArgumentException if the limit is non-positive
-     */
-    public void setMaxDatagramSize( int maxDatagramSize ) {
-        if ( maxDatagramSize <= 0 ) {
-            throw new IllegalArgumentException( "Cannot set a non-positive maxDatagramSize" );
-        }
-
-        int oldMaxDatagramSize = this.maxDatagramSize;
-        this.maxDatagramSize = maxDatagramSize;
-
-        if ( maxDatagramSize != oldMaxDatagramSize ) {
-            // drop all datagrams because they now have the wrong buffer size
-            synchronized( receiveQueue ) {
-                receiveQueue.clear();
-            }
-        }
-    }
-
-    /**
-     * @return the limit on the size if the buffering queue of datagrams
-     */
-    public int getReceiveDatagramQueueSizeLimit() {
-        synchronized( receiveQueue ) {
-            return receiveQueue.size() + receiveQueue.remainingCapacity();
         }
     }
 
