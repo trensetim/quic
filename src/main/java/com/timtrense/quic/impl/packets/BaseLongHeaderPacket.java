@@ -1,6 +1,7 @@
 package com.timtrense.quic.impl.packets;
 
 import lombok.Data;
+import lombok.ToString;
 
 import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.LongHeaderPacket;
@@ -13,6 +14,7 @@ import com.timtrense.quic.ProtocolVersion;
  * @author Tim Trense
  */
 @Data
+@ToString( callSuper = true )
 public abstract class BaseLongHeaderPacket implements LongHeaderPacket {
 
     protected byte flags;

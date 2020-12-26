@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.ProtocolVersion;
@@ -76,15 +77,16 @@ import com.timtrense.quic.VersionNegotiationPacket;
  * @see <a href="https://tools.ietf.org/html/draft-ietf-quic-transport-32#section-17.2.1">QUIC Spec/Section 17.2.1</a>
  */
 @Data
+@ToString( callSuper = true )
 @RequiredArgsConstructor
 public class VersionNegotiationPacketImpl implements VersionNegotiationPacket {
 
+    private final List<ProtocolVersion> supportedVersions = new LinkedList<>();
     private byte flags;
     private long destinationConnectionIdLength;
     private ConnectionId destinationConnectionId;
     private long sourceConnectionIdLength;
     private ConnectionId sourceConnectionId;
-    private final List<ProtocolVersion> supportedVersions = new LinkedList<>();
 
     @Override
     public boolean isPacketValid() {

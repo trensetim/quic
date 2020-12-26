@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import com.timtrense.quic.ConnectionId;
 import com.timtrense.quic.Frame;
@@ -17,13 +18,14 @@ import com.timtrense.quic.ShortHeaderPacket;
  * @author Tim Trense
  */
 @Data
+@ToString( callSuper = true )
 @RequiredArgsConstructor
 public class ShortHeaderPacketImpl implements ShortHeaderPacket {
 
+    private final @NonNull List<Frame> payload = new LinkedList<>();
     private byte flags;
     private ConnectionId destinationConnectionId;
     private PacketNumber packetNumber;
-    private final @NonNull List<Frame> payload = new LinkedList<>();
 
     @Override
     public boolean isPacketValid() {

@@ -3,6 +3,7 @@ package com.timtrense.quic.impl.packets;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import com.timtrense.quic.Frame;
 import com.timtrense.quic.FrameContainingPacket;
@@ -76,6 +77,7 @@ import com.timtrense.quic.VariableLengthInteger;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
+@ToString( callSuper = true )
 public class InitialPacketImpl extends BaseLongHeaderPacket implements NumberedPacket, FrameContainingPacket {
 
     private VariableLengthInteger tokenLength;

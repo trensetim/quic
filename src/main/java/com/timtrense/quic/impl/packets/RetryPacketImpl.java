@@ -3,6 +3,7 @@ package com.timtrense.quic.impl.packets;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import com.timtrense.quic.ProtocolVersion;
 
@@ -116,6 +117,7 @@ import com.timtrense.quic.ProtocolVersion;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
+@ToString( callSuper = true )
 @RequiredArgsConstructor
 public class RetryPacketImpl extends BaseLongHeaderPacket {
 

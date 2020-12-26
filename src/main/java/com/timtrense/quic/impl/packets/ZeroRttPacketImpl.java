@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import com.timtrense.quic.Frame;
 import com.timtrense.quic.FrameContainingPacket;
@@ -55,12 +56,13 @@ import com.timtrense.quic.VariableLengthInteger;
  */
 @Data
 @EqualsAndHashCode( callSuper = true )
+@ToString( callSuper = true )
 @RequiredArgsConstructor
 public class ZeroRttPacketImpl extends BaseLongHeaderPacket implements NumberedPacket, FrameContainingPacket {
 
+    private final @NonNull List<Frame> payload = new LinkedList<>();
     // private VariableLengthInteger length; // that is the #getPayloadLength()
     private PacketNumber packetNumber;
-    private final @NonNull List<Frame> payload = new LinkedList<>();
 
     @Override
     public boolean isPacketValid() {
