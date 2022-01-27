@@ -2,10 +2,6 @@
 Pure Java implementation of QUIC.
 The primary goal of this project is to eventually evolve to Java's standard implementation of QUIC.
 
-[![Coverage](https://sonarqube.timtrense.com/api/project_badges/measure?project=com.timtrense.quic&metric=coverage)](https://sonarqube.timtrense.com/dashboard?id=com.timtrense.quic)
-[![Quality Gate Status](https://sonarqube.timtrense.com/api/project_badges/measure?project=com.timtrense.quic&metric=alert_status)](https://sonarqube.timtrense.com/dashboard?id=com.timtrense.quic)
-[![Build Status](https://jenkins.timtrense.com/buildStatus/icon?job=com.timtrense.quic)](https://jenkins.timtrense.com/buildStatus/icon?job=com.timtrense.quic)
-
 ## Project Structure
 This project combines a clean QUIC interface in com.timtrense.quic as well as a default implementation for it in com.timtrense.quic.impl.base and ~.frames and ~.packets.
 Because QUIC needs to have a specific variant of TLS 1.3 implemented to work, the com.timtrense.quic.tls package
