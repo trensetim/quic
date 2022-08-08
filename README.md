@@ -22,9 +22,9 @@ QUIC has many benefits when compared with existing "TLS over TCP" scenarios:
 - Survives a change in the clients IP address or port.
 - Stateless load balancing.
 - Easily extendable for new features and extensions.
-- QUIC conforming with [https://datatracker.ietf.org/doc/html/rfc9000](https://datatracker.ietf.org/doc/html/rfc9000)
-- HTTP/3 conforming with [https://datatracker.ietf.org/doc/html/rfc9114](https://datatracker.ietf.org/doc/html/rfc9114)
-- Minimal TLS 1.3 implementation conforming with [https://datatracker.ietf.org/doc/html/rfc8446](https://datatracker.ietf.org/doc/html/rfc8446)
+- QUIC conforming with [RFC9000](https://datatracker.ietf.org/doc/html/rfc9000)
+- HTTP/3 conforming with [RFC9114](https://datatracker.ietf.org/doc/html/rfc9114)
+- Minimal TLS 1.3 implementation conforming with [RFC8446](https://datatracker.ietf.org/doc/html/rfc8446)
 
 ## Contributing
 Contributions welcome. Please feel free to contact me or write a pull request.
