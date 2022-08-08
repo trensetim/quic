@@ -46,4 +46,4 @@ This implementation uses [HKDF by Patrick Favre-Bulle](https://github.com/patric
 And it also uses [Bytes by Patrick Favre-Bulle](https://github.com/patrickfav/bytes-java)
  because with it, by-quic-defined byte arrays are made immutable.
  
-And huge thanks to https://github.com/quicwg for making that promising protocol in the first place.
+And huge thanks to [QuicWG](https://github.com/quicwg) for making that promising protocol in the first place.
