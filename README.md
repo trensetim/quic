@@ -11,6 +11,21 @@ Because QUIC needs to have a specific variant of TLS 1.3 implemented to work, th
 The implementation of the protocol is still work in progess but aims to completly adhere and implement the IETF specification at https://tools.ietf.org/html/draft-ietf-quic-transport-32 and referenced documents.
 I will set up  a Dockerfile for integration testing at https://quicwg.org/ as soon as this implementation reaches usability.
 
+##QUIC Protocol Features
+
+QUIC has many benefits when compared with existing "TLS over TCP" scenarios:
+
+  All packets are encrypted and handshake is authenticated with TLS 1.3.
+  Parallel streams of both reliable and unreliable application data.
+  Exchange application data in the first round trip (0-RTT).
+  Improved congestion control and loss recovery.
+  Survives a change in the clients IP address or port.
+  Stateless load balancing.
+  Easily extendable for new features and extensions.
+  QUIC conforming with https://datatracker.ietf.org/doc/html/rfc9000
+  HTTP/3 conforming with https://datatracker.ietf.org/doc/html/rfc9114
+  Minimal TLS 1.3 implementation conforming with https://datatracker.ietf.org/doc/html/rfc8446
+
 ## Contributing
 Contributions welcome. Please feel free to contact me or write a pull request.
 Because the main focus currently is implementing the protocol itself, there are many test cases yet to write. 
