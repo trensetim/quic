@@ -1,6 +1,6 @@
 # quic
-Pure Java implementation of QUIC.
-The primary goal of this project is to eventually evolve to Java's standard implementation of QUIC.
+Pure Java implementation of IETF [QUIC](https://quicwg.github.io/).
+The primary goal of this project is to eventually evolve to Java's standard implementation of QUIC Protocol.
 
 ## Project Structure
 This project combines a clean QUIC interface in com.timtrense.quic as well as a default implementation for it in com.timtrense.quic.impl.base and ~.frames and ~.packets.
