@@ -8,7 +8,7 @@ Because QUIC needs to have a specific variant of TLS 1.3 implemented to work, th
  addresses an implementation of TLS which is specific for QUIC. 
 
 ## Project Status
-The implementation of the protocol is still work in progess but aims to completly adhere and implement the IETF specification at https://tools.ietf.org/html/draft-ietf-quic-transport-32 and referenced documents.
+The implementation of the QUIC protocol was standardised in RFC 9000 and implement the IETF specification at https://tools.ietf.org/html/draft-ietf-quic-transport-32 and referenced documents.
 I will set up  a Dockerfile for integration testing at https://quicwg.org/ as soon as this implementation reaches usability.
 
 ##QUIC Protocol Features
