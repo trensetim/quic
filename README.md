@@ -33,7 +33,7 @@ Or sonarqube issues to fix. You may have a look on the sonarqube or test cases a
 I would really appreciate any help I could possibly get with this project.
 
 ## License
-This project is open source and freely available even for commercial use and in undisclosed commercial projects.
+This project is open source and licensed under the [MIT License](https://github.com/trensetim/quic/blob/main/LICENSE) and freely available even for commercial use and in undisclosed commercial projects.
 
 ## Acknowledgements
 Thanks to ptrd/kwik for doing the heavy lifting on most parts of implementing the QUIC protocol 
