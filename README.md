@@ -1,4 +1,4 @@
-# quic
+# Java Quic
 Pure Java implementation of IETF [QUIC](https://quicwg.github.io/).
 The primary goal of this project is to eventually evolve to Java's standard implementation of QUIC Protocol.
 
