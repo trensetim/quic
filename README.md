@@ -1,15 +1,16 @@
+================================================================================
+
+⚠️ This project is [archived](https://github.com/trensetim/quic/issues/11). You will want to try out [kwik](https://github.com/ptrd/kwik).
+
+================================================================================
+
 # Java Quic
-Pure Java implementation of IETF [QUIC](https://quicwg.github.io/).
-The primary goal of this project is to eventually evolve to Java's standard implementation of QUIC Protocol.
+Partial, pure-Java implementation of IETF [QUIC](https://quicwg.github.io/).
 
 ## Project Structure
 This project combines a clean QUIC interface in com.timtrense.quic as well as a default implementation for it in com.timtrense.quic.impl.base and ~.frames and ~.packets.
 Because QUIC needs to have a specific variant of TLS 1.3 implemented to work, the com.timtrense.quic.tls package
  addresses an implementation of TLS which is specific for QUIC. 
-
-## Project Status
-The implementation of the QUIC protocol was standardised in RFC 9000 and implemented the IETF specification [here](https://tools.ietf.org/html/draft-ietf-quic-transport-32) and referenced documents.
-I will set up  a Dockerfile for integration testing [here](https://quicwg.org/) as soon as this implementation reaches usability.
 
 ## QUIC Protocol Features
 
